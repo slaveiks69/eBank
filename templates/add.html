@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>eBank | Добавление</title>
+
+  <script src="{{url_for('static', filename='/client/scripts/jquery.js')}}"></script>
+  <script src="{{url_for('static', filename='/client/scripts/jquery.maskedinput.js')}}"></script>
+  <link href="{{url_for('static', filename='/client/css/main.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static', filename='/client/css/add.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
+  <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
+
+  <style>
+    @font-face {
+      font-family: "Uni Sans";
+      src: local("Uni Sans"),
+      url("{{url_for('static', filename='/client/css/fonts/Uni Sans Thin.otf')}}") format("opentype"),
+      url("{{url_for('static', filename='/client/css/fonts/Uni Sans Thin Italic.otf')}}") format("opentype"),
+      url("{{url_for('static', filename='/client/css/fonts/Uni Sans Heavy.otf')}}") format("opentype"),
+      url("{{url_for('static', filename='/client/css/fonts/Uni Sans Heavy Italic.otf')}}") format("opentype");
+    }
+
+    @font-face {
+      font-family: "Font Awesome 6 Pro";
+      src: local("Font Awesome 6 Pro"),
+      url("{{url_for('static', filename='/client/css/fonts/fa-solid-900.woff2')}}") format("woff2");
+    }
+  </style>
+
+</head>
+
+<body>
+  <div class="flex gap">
+    <div tabindex="-1" class="lamp on passport">
+      <li class="fa-solid fa-passport" />
+      Passport
+    </div>
+    <div class="lamp {% if check %}on{% endif %}">
+      <li class="fa-solid fa-users" />
+      {% if check %}<i>{{ totalCount }}</i>{% endif %}
+    </div>
+    <div class="lamp {% if db_check %}on{% endif %}">
+      <li class="fa-solid fa-credit-card-alt" />
+    </div>
+    <div tabindex="-1" class="lamp pointer">
+      <li class="fa-solid fa-arrow-alt-left" />
+    </div>
+  </div>
+  <div>
+    <div>
+      <div class="fit">
+        <div class="flex">
+          <div class="input-with-top-text">
+            <i class="top-text">Серия и номер паспорта</i>
+            <input id="passport" placeholder="** ** ******" type="text" />
+          </div>
+          <div class="bts top">
+            <input class="confirm-button rf" type="button" value="✓" />
+            <input class="cancel-button rf" tabindex="-1" type="button" value="✕" />
+          </div>
+        </div>
+
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Паспорт выдан</i>
+          <input id="vidan" class="upper-case" type="text" />
+        </div>
+        <div class="card-grid">
+          <input type="button" class="card card-color-1" tabindex="-1" value="Г.Москва" />
+          <input type="button" class="card card-color-2" tabindex="-1" value="Г. Москва" />
+          <input type="button" class="card card-color-3" tabindex="-1" value="МСК обл" />
+          <input type="button" class="card card-color-4" tabindex="-1" value="СПб" />
+        </div>
+        <div class="flex">
+          <div class="input-with-top-text">
+            <i class="top-text">Дата выдачи</i>
+            <input id="date" placeholder="**.**.****" type="text" />
+          </div>
+          <div class="input-with-top-text">
+            <i class="top-text">Код подразделения</i>
+            <input id="kod" placeholder="***-***" type="text" />
+          </div>
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Фамилия</i>
+          <input id="f" type="text" />
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Имя</i>
+          <input id="i" type="text" />
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Отчество</i>
+          <input id="o" type="text" />
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Дата рождения</i>
+          <input id="dater" placeholder="**.**.****" type="text" />
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Место рождения</i>
+          <input id="birth" class="upper-case" type="text" />
+        </div>
+        <div class="input-with-top-text vidan">
+          <i class="top-text">Адрес проживания</i>
+          <input id="address" class="upper-case" type="text" />
+        </div>
+        <div class="flex">
+          <div class="input-with-top-text">
+            <i class="top-text">Номер телефона</i>
+            <input id="nomer" placeholder="+7(***)***-**-**" type="text" />
+          </div>
+          <div class="input-with-top-text">
+            <i class="top-text">Секртеное слово</i>
+            <input id="slovo" type="text" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <input class="accept-button" {% if not db_check %}disabled{% endif %} type="button" value="Записать" />
+</body>
+<script src="{{url_for('static', filename='/client/scripts/add.js')}}"></script>
+
+</html>

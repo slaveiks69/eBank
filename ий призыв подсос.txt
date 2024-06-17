@@ -1,0 +1,98 @@
+// чтобы войти в аккаунт нужно сделать пость запрос
+http://black:33380/api/login?database=v_24&password=module
+// api на получение статистики, ночевки, свободных и комплектаций
+http://black:33380/api/recruits/statistic
+//апи на получение призывников на 30.05 число
+// decoded
+http://black:33380/api/recruits?requireTotalCount=true&filter=[["expectedDate",">=","2024-05-30T00:00:00+03"],"and",["expectedDate","<","2024-05-31T00:00:00+03"]]
+// encoded to uri type
+http://black:33380/api/recruits?requireTotalCount=true&filter=%5B%5B%22expectedDate%22%2C%22%3E%3D%22%2C%222024-05-30T00%3A00%3A00%2B03%22%5D%2C%22and%22%2C%5B%22expectedDate%22%2C%22%3C%22%2C%222024-05-31T00%3A00%3A00%2B03%22%5D%5D
+
+    <video id="a1" src="/static//images/Lv2_kara_Cheat_datta_Motoyuusha_Kouho_no_Mattari_Isekai_Life_%5B01%5D_%5BAniLibria%5D_%5BWEBRip_1080p_HEVC%5D.mkv" style="position: absolute;left: 0px;height: -webkit-fill-available;width: -webkit-fill-available;"></video>
+    
+{
+    "address": "г.Москва",
+    "admiss": {
+        "id": 5,
+        "name": "НЕ ИМЕЕТ"
+    },
+    "birthDate": "2002-11-05T00:00:00",
+    "canBeReturned": true,
+    "cityMunicipality": {
+        "id": 618,
+        "name": "Царицыно"
+    },
+    "createdAt": "2024-06-04T00:00:00",
+    "deliveredAt": "2024-06-04T00:00:00",
+    "dispatchedAt": null,
+    "education": {
+        "level": {
+            "id": 5,
+            "name": "ОБЩЕЕ НЕПОЛН.СРЕДНЕЕ"
+        },
+        "militaryDebtSpeciality": {
+            "id": 1,
+            "name": "нет"
+        },
+        "speciality": {
+            "id": null,
+            "name": null
+        }
+    },
+    "expectedDate": "2024-06-04T00:00:00",
+    "family": {
+        "childCount": 0,
+        "situation": "Normal",
+        "statusId": 2,
+        "statusName": "ХОЛОСТ"
+    },
+    "firstName": "Вадим",
+    "hasZIC": false,
+    "id": 8001,
+    "internalTeamId": 213,
+    "isConvict": false,
+    "lastName": "Тимофеев",
+    "medical": {
+        "doctorId_0": null,
+        "doctorId_1": null,
+        "doctorName_0": null,
+        "doctorName_1": null,
+        "healthCategory": {
+            "id": 19,
+            "name": "А-4"
+        },
+        "healthParagraph_0": null,
+        "healthParagraph_1": null,
+        "height": 168,
+        "weight": 56
+    },
+    "middleName": "Евгеньевич",
+    "militaryDebtSpecialityDispatching": "",
+    "militaryDistrictName": "",
+    "militaryDocument": {
+        "comissionDecisionDate": "2024-06-04T01:00:00",
+        "creationDate": "2024-06-04T00:00:00",
+        "militaryBadgeNumber": "АБ-038342",
+        "militaryDocumentIssued": "Бутырский",
+        "number": "5898824",
+        "series": "АС"
+    },
+    "militaryOffice": {
+        "id": 15,
+        "name": "Царицынский"
+    },
+    "militaryTypeName": "",
+    "militaryUnitName": "",
+    "passport": {
+        "bornCity": "ГОРОД МОСКВА",
+        "code": "770-028",
+        "creationDate": "2022-11-14T00:00:00",
+        "number": "212268    ",
+        "series": "4523    ",
+        "source": "ГУ МВД РОССИИ ПО Г.МОСКВЕ"
+    },
+    "state": "CommandDeclared",
+    "stationName": "",
+    "uniqueKey": "отп0406",
+    "updatedAt": "2024-06-04T00:00:00"
+}
