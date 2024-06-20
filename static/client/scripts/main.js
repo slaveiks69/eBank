@@ -50,6 +50,15 @@ $(".close-authors").click(function () {
 
 $(".drag").draggable({});
 
+$(".btn-db").click(function () {
+  let window_db = document.querySelector(".window");
+
+  if (window_db.classList.contains("popup-close"))
+    window_db.classList.remove("popup-close");
+  else
+    window_db.classList.add("popup-close");
+});
+
 
 //window.frames[0].add
 

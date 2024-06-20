@@ -33,7 +33,7 @@ class static:
         
         try:
             req = self.session.post(f'http://{self.cfg["black"]["host"]}/api/login?database={self.cfg["black"]["database"]}&password={self.cfg["black"]["password"]}')
-        except requests.exceptions.connectionError:
+        except requests.exceptions.ConnectionError:
             self.status = 503
             return
 
@@ -210,6 +210,10 @@ def edit_person_bd(
             cursor.execute(query)
             conn.commit()
             
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT * FROM person WHERE id = {id};")
+            row = cursor.fetchone()
+
             person = {
                 'id': row[0],
                 'passportSerial': row[1],

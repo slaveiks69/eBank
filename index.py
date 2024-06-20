@@ -120,7 +120,7 @@ def export():
     persons_to_export = arg['data']
 
     shutil.copy(static.cfg["excel"]["formPath"], static.cfg["excel"]["copyFormPath"])
-
+    
     workbook = openpyxl.load_workbook(static.cfg["excel"]["copyFormPath"])
     sheet = workbook['Лист1']
 
@@ -132,6 +132,10 @@ def export():
         passportIssueDate = datetime.datetime.strptime(person['passportIssueDate'],"%a, %d %b %Y %H:%M:%S GMT")
 
         #print(birthDate)
+        passportSerial = person['passportSerial']
+        ps = person['passportSerial'].split(' ')
+        if(2 == len(ps)):
+            passportSerial = "АС "+ps[1]
 
         sheet.cell(row=row_start, column=1).value = index # индексация с 0
         sheet.cell(row=row_start, column=2).value = person['lastName'] # фамилия
@@ -139,7 +143,7 @@ def export():
         sheet.cell(row=row_start, column=4).value = person['patronymic'] # отчество
         sheet.cell(row=row_start, column=5).value = birthDate.strftime("%d.%m.%Y") # дата рождения
         sheet.cell(row=row_start, column=6).value = person['birthPlace'] # место рождения
-        sheet.cell(row=row_start, column=7).value = person['passportSerial'] # серия и номер паспорта
+        sheet.cell(row=row_start, column=7).value = passportSerial # серия и номер паспорта
         sheet.cell(row=row_start, column=8).value = person['passportIssue'] # где и когда выдан
         sheet.cell(row=row_start, column=9).value = passportIssueDate.strftime("%d.%m.%Y") # дата выдачи
         sheet.cell(row=row_start, column=10).value = person['passportDivisionCode'] # код подразделения

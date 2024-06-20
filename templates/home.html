@@ -13,6 +13,10 @@
     <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
     <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
 
+    <script src="{{url_for('static', filename='/client/scripts/w2ui.js')}}"></script>
+    <link href="{{url_for('static', filename='/client/css/w2ui.css')}}" rel="stylesheet" />
+    
+
     <style>
         @font-face {
             font-family: "dsk";
@@ -39,6 +43,9 @@
         </div>
         <div class="menu">
             <div class="wfa">
+                <li class="fa-solid fa-database menu-item btn-db" /><i class="btn-text">База</i>
+            </div>
+            <div class="wfa">
                 <li class="fa-solid fa-user-plus menu-item btn-add" /><i class="btn-text">Добавить</i>
             </div>
             <div class="wfa">
@@ -53,7 +60,7 @@
         </div>
     </div>
     <div style="background-image: url('/static//images/{{ bgimg }}');" class="right-side">
-        
+        <div class="window popup-close"></div>
     </div>
 
     <div id="at" class="author-block popup-close">

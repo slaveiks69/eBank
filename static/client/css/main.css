@@ -294,3 +294,10 @@ input::placeholder
     background-color: var(--red) !important;
 }
 
+.window
+{
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    margin-left: 3em;
+}
+
