@@ -15,18 +15,16 @@
 
     <style>
         @font-face {
-            font-family: "Uni Sans";
-            src: local("Uni Sans"),
-            url("{{url_for('static', filename='/client/css/fonts/Uni Sans Thin.otf')}}") format("opentype"),
-            url("{{url_for('static', filename='/client/css/fonts/Uni Sans Thin Italic.otf')}}") format("opentype"),
-            url("{{url_for('static', filename='/client/css/fonts/Uni Sans Heavy.otf')}}") format("opentype"),
-            url("{{url_for('static', filename='/client/css/fonts/Uni Sans Heavy Italic.otf')}}") format("opentype");
+            font-family: "dsk";
+            src: local("dsk"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
         }
 
         @font-face {
             font-family: "Font Awesome 6 Pro";
             src: local("Font Awesome 6 Pro"),
-            url("{{url_for('static', filename='/client/css/fonts/fa-solid-900.woff2')}}") format("woff2");
+            url("{{url_for('static', filename='/client/fonts/fa-solid-900.woff2')}}") format("woff2");
         }
     </style>
 
@@ -34,6 +32,7 @@
 
 <body>
     <div class="left-side">
+        <div class="bg" style="pointer-events: none; position: absolute; top: 0px;left: 17%; width: -webkit-fill-available;background-size: contain;background-image: url({{url_for('static', filename='/images/nav-decoration_b1df2b94.png')}});height: 100%;background-repeat: no-repeat;"></div>
         <div class="logo gap">
             <img class="logo-picture" src="{{url_for('static', filename='/images/e-logo.png')}}" />
             <i class="fm fa-solid">bank</i>
@@ -49,11 +48,11 @@
                 <li class="fa-solid fa-at menu-item btn-at" /><i class="btn-text">Авторы</i>
             </div>
             <div class="wfa transparent">
-                <li class="fa-solid fa-code menu-nobtn" /><i style="font-size: 0.56em;">version: 0.123a</i>
+                <li class="fa-solid fa-code menu-nobtn" /><i style="font-size: 0.56em; font-family: 'dsk';">version {{ ver }}</i>
             </div>
         </div>
     </div>
-    <div class="right-side">
+    <div style="background-image: url('/static//images/{{ bgimg }}');" class="right-side">
         
     </div>
 
@@ -73,7 +72,7 @@
         <div id="table" class="export-window">
             
         </div>
-        <input tabindex="-1" class="button clear" type="button" value="Очистить"/>
+        <input tabindex="-1" class="button clear" disabled type="button" value="Очистить"/>
         <input tabindex="-1" class="button export" type="button" value="Экспорт"/>
     </div>
 

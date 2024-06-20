@@ -1,8 +1,6 @@
 from flask import Flask, json, render_template, request, redirect, url_for
 from utils import *
 
-
-
 app = Flask(__name__)
 
 app.config['SERVER_NAME'] = 'localhost:1111'
@@ -10,12 +8,12 @@ app.config['SERVER_NAME'] = 'localhost:1111'
 @app.get('/')
 def home():
 
-    check_local_database()
-    print(get_persons())
+    #check_local_database()
+    #print(get_persons())
 
-    print(get_recruits_statistic())  
+    #print(get_recruits_statistic())  
 
-    return render_template('home.html')
+    return render_template('home.html', ver=static.cfg["default"]["version"], bgimg=static.cfg["default"]["background_image"])
 
 @app.get('/test')
 def hello_world1():
@@ -34,7 +32,7 @@ def find_people():
             found = { 'found': person, 's': 'bank' }
 
     # ipriziv
-    if not static.loginCheck:
+    if static.loginCheck:
         persons = get_persons()['data']
    
         for person in persons:
@@ -44,15 +42,39 @@ def find_people():
 
     return found
 
+import re
+
+def capitalize_tajics(str):
+    joins = ' '
+    tajics = ['оглы','уулу','улы']
+
+    if str.find('-') != -1:
+        joins = '-'
+
+    str = re.split(' |-', str)
+
+    b = []
+
+    for a in str:
+        if a.lower() in tajics:
+            a = a.lower()
+        else:
+            a = a.capitalize()
+        b.append(a)
+
+    x = joins.join(a for a in b)
+
+    return x
+
 @app.post('/add-person')
 def add_person():
     arg = json.loads(request.data)
 
     person = add_person_bd(
         arg['passport_serial'], 
-        arg['last_name'], 
-        arg['first_name'], 
-        arg['patronymic'], 
+        capitalize_tajics(arg['last_name']), 
+        capitalize_tajics(arg['first_name']), 
+        capitalize_tajics(arg['patronymic']), 
         arg['birth_date'], 
         arg['birth_place'], 
         arg['passport_issue'], 
@@ -73,7 +95,7 @@ def edit_person():
     person = edit_person_bd(
         arg['id'],
         arg['passport_serial'], 
-        arg['last_name'], 
+        arg['last_name'],
         arg['first_name'], 
         arg['patronymic'], 
         arg['birth_date'], 
@@ -97,9 +119,9 @@ def export():
 
     persons_to_export = arg['data']
 
-    shutil.copy(Excel_Form_Path, Excel_Copy_Form_Path)
+    shutil.copy(static.cfg["excel"]["formPath"], static.cfg["excel"]["copyFormPath"])
 
-    workbook = openpyxl.load_workbook(Excel_Copy_Form_Path)
+    workbook = openpyxl.load_workbook(static.cfg["excel"]["copyFormPath"])
     sheet = workbook['Лист1']
 
     row_start = 4
@@ -136,16 +158,18 @@ def export():
         k = 1
         now = datetime.datetime.now().strftime("%Y.%m.%d")
 
+        ExcelServerPath = static.cfg["default"]["serverPath"]+"\\"+static.cfg["default"]["folder"]
+
         while (True):
             name = f"ВТБ_{now}_{k}.xlsx"
-            if os.path.exists(Excel_Save_Path+name):
+            if os.path.exists(ExcelServerPath+static.cfg["excel"]["savePath"]+name):
                 k = k + 1
             else:
                 break
         
-        workbook.save(Excel_Save_Path+name)
+        workbook.save(ExcelServerPath+static.cfg["excel"]["savePath"]+name)
 
-        save_folder_path = Excel_Exports_Path+"\\"+now+"\\"
+        save_folder_path = ExcelServerPath+static.cfg["excel"]["exportsPath"]+"\\"+now+"\\"
 
         if not os.path.exists(save_folder_path):
             os.makedirs(save_folder_path)
@@ -162,7 +186,7 @@ def export():
         
         workbook.save(save_folder_path+name)
     else:
-        workbook.save(Excel_Copy_Form_Path)
+        workbook.save(static.cfg["excel"]["copyFormPath"])
 
     return { 'export': 'okay' }
 
@@ -171,7 +195,6 @@ total = static.get_total_count()
 @app.get('/add/')
 def add_get():
     if request.method == 'GET':
-        
         return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck )
 
 if __name__ == '__main__':

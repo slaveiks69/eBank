@@ -1,13 +1,21 @@
 import requests, urllib.parse
 import datetime
-from config import *
+#from config import *
 import pymssql
+
+import yaml
+
+def get_config():
+    with open("config.yaml", encoding="UTF-8") as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+        return cfg
 
 class static:
     session = requests.Session()
     loginCheck = False
     status = 0
     baseCheck = False
+    cfg = get_config()
     
     @classmethod
     def get_total_count(self):
@@ -18,13 +26,14 @@ class static:
     
     @classmethod
     def login(self):
-        if self.loginCheck == True: return
-
+        if self.cfg["default"]["ipriziv"] == False: 
+            return
         if self.status == 503: return
+        if self.loginCheck == True: return
         
         try:
-            req = self.session.post(f'http://{BLACK_Host}/api/login?database={BLACK_Database}&password={BLACK_Password}')
-        except requests.exceptions.ConnectionError:
+            req = self.session.post(f'http://{self.cfg["black"]["host"]}/api/login?database={self.cfg["black"]["database"]}&password={self.cfg["black"]["password"]}')
+        except requests.exceptions.connectionError:
             self.status = 503
             return
 
@@ -78,7 +87,7 @@ def find_in_bank(kod):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(SQL_Hostname, SQL_User, SQL_Password, SQL_Database)
+        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
 
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM person WHERE passport_serial = '{kod}';")
@@ -129,7 +138,7 @@ def add_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(SQL_Hostname, SQL_User, SQL_Password, SQL_Database)
+        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
 
         cursor = conn.cursor()
         bd = datetime.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
@@ -186,7 +195,7 @@ def edit_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(SQL_Hostname, SQL_User, SQL_Password, SQL_Database)
+        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
 
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM person WHERE id = {id};")
@@ -233,7 +242,7 @@ def get_persons(take = 0):
         
         time_stamps = get_datetime_now_day()
 
-        uri = f'http://{BLACK_Host}/api/recruits?take={take}&requireTotalCount=true&filter='+urllib.parse.quote_plus(f'[["state","=","CommandDeclared"],"or",["state","=","Delivered"],"or",[["dispatchedAt",">=","{time_stamps[0]}T00:00:00+03"],"and",["dispatchedAt","<","{time_stamps[1]}T00:00:00+03"]]]')
+        uri = f'http://{static.cfg["black"]["host"]}/api/recruits?take={take}&requireTotalCount=true&filter='+urllib.parse.quote_plus(f'[["state","=","CommandDeclared"],"or",["state","=","Delivered"],"or",[["dispatchedAt",">=","{time_stamps[0]}T00:00:00+03"],"and",["dispatchedAt","<","{time_stamps[1]}T00:00:00+03"]]]')
 
         req = static.session.get(uri)
 
@@ -252,7 +261,7 @@ def get_passport(person):
 
 def check_local_database():
     try:
-        conn = pymssql.connect(SQL_Hostname, SQL_User, SQL_Password, SQL_Database)
+        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
         conn.close()
         return True
     except:

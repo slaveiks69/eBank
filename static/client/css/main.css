@@ -6,16 +6,19 @@
     --blue: #007cc3;
     --hblue: #289de0;
     --green: #1cf61c;
+    --mugen: #788ccb;
 }
 
 .button
 {
+    font-family: "dsk";
+    font-size: 0.6em;
     margin-top: 5px;
     padding: 5px 5px;
     width: -webkit-fill-available;
-    border-color: white;
+    border-color: var(--mugen);
     color: white;
-    background-color: var(--semi-black);
+    background-color: #000;
     border-radius: 10px;
     border-style: dashed;
     z-index: 4;
@@ -27,6 +30,18 @@
     border-style: solid;
 }
 
+input[type="button" i]:disabled {
+    border-color: var(--red) !important;
+    border-style: solid !important;
+    background-color: rgba(201, 0, 0, 0.348) !important;
+    color:rgba(201, 0, 0, 0.348) !important;
+}
+
+input[type="button" i]:disabled:hover{
+    border-color: var(--red) !important;
+    background-color: rgba(201, 0, 0, 0.348) !important;
+}
+
 .export-window
 {
     min-width: 100px;
@@ -35,9 +50,10 @@
     font-size: 0.8em;
     padding: 10px;
     z-index: 3;
-    background-color: var(--semi-black);
+    background-color: #000;
     border-radius: 15px;
     border-style: dashed;
+    border-color: var(--mugen);
     display: flex;
     flex-direction: column;
 }
@@ -55,6 +71,7 @@
 html
 {
     overflow: hidden;    
+    
 }
 
 .popup
@@ -78,7 +95,7 @@ html
 
 .transparent
 {
-    color: rgba(255, 255, 255, 0.166) !important;
+    color: rgba(255, 255, 255, 0.3) !important;
 }
 
 .logo-picture
@@ -123,7 +140,6 @@ a
 {
     padding: 0px !important;
     height: -webkit-fill-available;
-    background-color: #444b4b;
     display: flex;
     flex-direction: column;
 }
@@ -142,7 +158,7 @@ a
 .menu-item:hover
 {
     cursor: pointer;
-    background-color: #4a5353;
+    text-decoration: underline;
 }
 
 .menu-nobtn
@@ -163,9 +179,9 @@ a
 
 .btn-text
 {
-    font-family: "Helvetica Neue", helvetica, verdana, sans-serif;
+    font-family: "dsk";
     font-weight: 100;
-    font-size: 0.9em;
+    font-size: 0.8em;
 }
 
 .left-side
@@ -173,7 +189,7 @@ a
     float:left; 
     width:17%; 
     height: -webkit-fill-available;
-    background-color: #4a5353;
+    background-color: #000;
 }
 
 .right-side
@@ -181,16 +197,15 @@ a
     float:right; 
     width:83%; 
     height: 100%;
-    background-image: url("bg.png");
-    background-size: contain;
+    background-size: cover;
 }
 
 input[type="text" i] 
 {
     border-style: solid;
-    background-color: #404747;
+    background-color: #000;
     outline:none;
-    border-color: white;
+    border-color: var(--mugen);
     color: white;
     padding: 7px;
     font-size: 0.8em;
@@ -223,7 +238,7 @@ body
 {
     background-color: #404747;
     color: white;
-    font-family: "Helvetica Neue", helvetica, verdana, sans-serif;
+    font-family: "dsk";
     margin: 0px;
     height: 100%;
     width: 100%;
@@ -244,7 +259,7 @@ body
 {
     font-size: 0.6em;
     border-radius: 5px;
-    background-color: var(--semi-black);
+    background-color: #000;
     border: 2px;
     top: 6px;
     position: relative;
@@ -273,3 +288,9 @@ input::placeholder
 {
     background-color: var(--blue) !important;
 }
+
+.off
+{
+    background-color: var(--red) !important;
+}
+

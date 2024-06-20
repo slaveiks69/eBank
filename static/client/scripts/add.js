@@ -14,7 +14,6 @@ const postData = async (url = '', data = {}) => {
 };
 
 $(function () {
-  top.document.getElementById('export').classList.remove("popup-close");
   $("#kod").mask("999-999");
   $(".pointer").click(function () {
     top.document.querySelector('.popup').classList.add('popup-close');
@@ -194,7 +193,37 @@ $(function () {
       }
     });
   $("#date").mask("99.99.9999");
-  $("#dater").mask("99.99.9999");
+  function convertToDate(val)
+  {
+    let d = val.split(".");
+    let dat = new Date(d[1]+"/"+d[0]+"/"+d[2]);
+    return dat;
+  }
+  Date.prototype.addDays = function(days) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + days);
+    return date;
+  }
+  Date.prototype.addYears = function(years) {
+    var date = new Date(this.valueOf());
+    date.setDate(date.getDate() + years*365);
+    return date;
+  }
+  $("#dater").mask("99.99.9999", { completed: function () {
+    let date = convertToDate($("#date").val());
+    let dater = convertToDate($("#dater").val());
+
+    let now = new Date(Date.now());
+
+    if ((now > dater.addYears(20).addDays(90)) && (date <= dater.addYears(20)))
+    {
+      document.querySelector("#date").classList.add("off");
+    }
+    else
+    {
+      document.querySelector("#date").classList.remove("off");
+    }
+  }});
   $("#nomer").mask("+7(999)999-99-99");
   $("#f").on("input", function () {
     $("#slovo").val($(this).val());
@@ -212,37 +241,41 @@ $(function () {
     return new Promise(resolve => setTimeout(resolve, ms));
   }
   $(".accept-button").click(function () {
-    if (window.found.s == 'bank') {
-      postData('http://localhost:1111/edit-person', {
-        id: window.found.found.id,
-        passport_serial: $("#passport").val(),
-        last_name: $("#f").val(),
-        first_name: $("#i").val(),
-        patronymic: $("#o").val(),
-        birth_date: $("#dater").val(),
-        birth_place: $("#birth").val().toUpperCase(),
-        passport_issue: $("#vidan").val().toUpperCase(),
-        passport_issue_date: $("#date").val(),
-        passport_division_code: $("#kod").val(),
-        address: $("#address").val().toUpperCase(),
-        phone_home: $("#nomer").val(),
-        recruitment_office_id: 1,
-        codeword: $("#slovo").val()
-      })
-        .then((data) => {
-          if (data.reload == "edit") {
-            top.document.querySelector('.popup').src = "about:blank";
-            sleep(500).then(() => { top.document.querySelector('.popup').src = "add/"; });
-            
-            person_to_html(data.person);
+    if (window.found != null)
+      if (window.found.s == 'bank') {
+        postData('http://localhost:1111/edit-person', {
+          id: window.found.found.id,
+          passport_serial: $("#passport").val(),
+          last_name: $("#f").val(),
+          first_name: $("#i").val(),
+          patronymic: $("#o").val(),
+          birth_date: $("#dater").val(),
+          birth_place: $("#birth").val().toUpperCase(),
+          passport_issue: $("#vidan").val().toUpperCase(),
+          passport_issue_date: $("#date").val(),
+          passport_division_code: $("#kod").val(),
+          address: $("#address").val().toUpperCase(),
+          phone_home: $("#nomer").val(),
+          recruitment_office_id: 1,
+          codeword: $("#slovo").val()
+        })
+          .then((data) => {
+            if (data.reload == "edit") {
+              change_val("","","","","","","","","");
+              $("#passport").val("");
+              $("#nomer").val("");
+  
+              
+              person_to_html(data.person);
 
-            add.push(data.person);
+              add.push(data.person);
 
-            localStorage.setItem("add", JSON.stringify(add));
-          }
-        });
-    }
-    else {
+              localStorage.setItem("add", JSON.stringify(add));
+            }
+          });
+        return;
+      }
+    
       postData('http://localhost:1111/add-person', {
         passport_serial: $("#passport").val(),
         last_name: $("#f").val(),
@@ -260,8 +293,9 @@ $(function () {
       })
         .then((data) => {
           if (data.reload == "add") {
-            top.document.querySelector('.popup').src = "about:blank";
-            sleep(500).then(() => { top.document.querySelector('.popup').src = "add/"; });
+            change_val("","","","","","","","","");
+            $("#passport").val("");
+            $("#nomer").val("");
 
             person_to_html(data.person);
 
@@ -270,7 +304,7 @@ $(function () {
             localStorage.setItem("add", JSON.stringify(add));
           }
         });
-    }
+    
     //window.found = "{ 'found': 'none' }";
     //buttonChange('non');
   });

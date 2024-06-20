@@ -16,6 +16,7 @@ const postData = async (url = '', data = {}) => {
 $(".btn-add").click(function () {
   $(".popup").removeClass("popup-close");
   document.querySelector('.popup').src = "add/";
+  document.getElementById('export').classList.remove("popup-close");
 });
 
 function person_to_html(person) {
@@ -29,6 +30,7 @@ $(".btn-export").click(function () {
 
   if(classes.contains("popup-close"))
   {
+    top.document.getElementById('table').innerHTML = '';
     add = JSON.parse(localStorage.getItem("add"));
     if (add != null)
       add.forEach((person) => person_to_html(person));
@@ -53,7 +55,15 @@ $(".drag").draggable({});
 
 $(document).ready(function () {
   $(".export").click(function () {
-    postData('http://localhost:1111/export', { data: window.frames[0].add })
+    
+    let data1 = [];
+    if (window.frames[0].add != undefined)
+      data1 = window.frames[0].add;
+    else
+      data1 = add;
+
+
+    postData('http://localhost:1111/export', { data: data1 })
       .then((data) => {
         if(data.export == "okay")
         {
