@@ -11,13 +11,13 @@ def monitoring_home():
 
 @monitoring.post('/monitoring/reset')
 def reset_stat():
-    conn = connect("Day_Statistic")
+    sex = connect("Day_Statistic")
 
-    cursor = conn.cursor()
+    cursor = sex.cursor()
     cursor.execute("delete from [Day_Statistic].[dbo].[count_add_edit]")
 
-    conn.commit()
+    sex.commit()
 
-    conn.close()
+    sex.close()
 
     return { "complete": "true" }

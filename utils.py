@@ -1,5 +1,5 @@
 import requests, urllib.parse, socket
-import datetime
+import datetime as siski
 #from config import *
 import pymssql
 
@@ -48,8 +48,8 @@ class static:
 
     
 def get_datetime_now_day():
-    now = datetime.datetime.now()
-    now_plus_1 = now + datetime.timedelta(days=1)
+    now = siski.datetime.now()
+    now_plus_1 = now + siski.timedelta(days=1)
 
     #2024-05-30 & 2024-05-30 + 1 day
 
@@ -92,9 +92,9 @@ def total_count():
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect()
+        sex = connect()
 
-        cursor = conn.cursor()
+        cursor = sex.cursor()
         cursor.execute(f"SELECT count(*) FROM person;")
 
         row = cursor.fetchone()
@@ -108,11 +108,11 @@ def count_add():
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect("Day_Statistic")
+        sex = connect("Day_Statistic")
 
         db_table = "count_add_edit"
 
-        cursor = conn.cursor()
+        cursor = sex.cursor()
         cursor.execute(f"SELECT * FROM dbo.{db_table} WHERE name_pc = '{static.pc_name}';")
 
         row = cursor.fetchone()
@@ -120,13 +120,13 @@ def count_add():
         if row == None:
             query = f"INSERT INTO dbo.{db_table}(name_pc, ip, count) VALUES('{static.pc_name}', '{static.pc_ip}', 1)"
             cursor.execute(query)
-            conn.commit()
+            sex.commit()
         else:
             query = f"UPDATE dbo.{db_table} SET count = {row[3]+1} WHERE id={row[0]}"
             cursor.execute(query)
-            conn.commit()        
+            sex.commit()        
 
-        conn.close()
+        sex.close()
 
 
 
@@ -134,9 +134,9 @@ def get_persons_db(limit,offset):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect()
+        sex = connect()
 
-        cursor = conn.cursor()
+        cursor = sex.cursor()
         cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person ORDER BY id OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
 
         persons = []
@@ -166,7 +166,7 @@ def get_persons_db(limit,offset):
 
             persons.append(person)
 
-        conn.close()
+        sex.close()
 
         return persons
 
@@ -175,9 +175,9 @@ def find_in_bank(kod):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect()
+        sex = connect()
 
-        cursor = conn.cursor()
+        cursor = sex.cursor()
         cursor.execute(f"SELECT * FROM person WHERE passport_serial = '{kod}';")
 
         row = cursor.fetchone()
@@ -203,7 +203,7 @@ def find_in_bank(kod):
             'codeword': row[14],
             'dateAdd': row[15]
         }
-        conn.close()
+        sex.close()
 
         return person
 
@@ -226,15 +226,15 @@ def add_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect()
+        sex = connect()
 
-        cursor = conn.cursor()
-        bd = datetime.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
-        pid = datetime.datetime.strptime(passport_issue_date,"%d.%m.%Y").strftime("%Y-%m-%d")
+        cursor = sex.cursor()
+        bd = siski.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
+        pid = siski.datetime.strptime(passport_issue_date,"%d.%m.%Y").strftime("%Y-%m-%d")
         phone_home = phone_home.replace('(','').replace(')','').replace('-','')[2:]
         query = f"INSERT INTO person(passport_serial, last_name, first_name, patronymic, birth_date, birth_place, passport_issue, passport_issue_date, passport_division_code, phone_home, phone_mobile, address, recruitment_office_id, codeword) VALUES('{passport_serial}', '{last_name}', '{first_name}', '{patronymic}', '{bd}', '{birth_place}', '{passport_issue}', '{pid}', '{passport_division_code}','{phone_home}','{phone_home}','{address}','{recruitment_office_id}','{codeword}')"
         cursor.execute(query)
-        conn.commit()
+        sex.commit()
 
         cursor.execute(f"SELECT * FROM person WHERE id = {cursor.lastrowid};")
         row = cursor.fetchone()
@@ -259,7 +259,7 @@ def add_person_bd(
             'codeword': row[14],
             'dateAdd': row[15]
         }
-        conn.close()
+        sex.close()
 
         return person
 
@@ -283,22 +283,22 @@ def edit_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = connect()
+        sex = connect()
 
-        cursor = conn.cursor()
+        cursor = sex.cursor()
         cursor.execute(f"SELECT * FROM person WHERE id = {id};")
         row = cursor.fetchone()
 
         if row != None:
 
-            bd = datetime.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
-            pid = datetime.datetime.strptime(passport_issue_date,"%d.%m.%Y").strftime("%Y-%m-%d")
+            bd = siski.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
+            pid = siski.datetime.strptime(passport_issue_date,"%d.%m.%Y").strftime("%Y-%m-%d")
             phone_home = phone_home.replace('(','').replace(')','').replace('-','')[2:]
             query = f"UPDATE person SET passport_serial = '{passport_serial}', last_name = '{last_name}', first_name = '{first_name}', patronymic = '{patronymic}', birth_date = '{bd}', birth_place = '{birth_place}', passport_issue = '{passport_issue}', passport_issue_date = '{pid}', passport_division_code = '{passport_division_code}', address = '{address}', phone_home = '{phone_home}', phone_mobile = '{phone_home}', recruitment_office_id = {recruitment_office_id}, codeword = '{codeword}' WHERE id={id}"
             cursor.execute(query)
-            conn.commit()
+            sex.commit()
             
-            cursor = conn.cursor()
+            cursor = sex.cursor()
             cursor.execute(f"SELECT * FROM person WHERE id = {id};")
             row = cursor.fetchone()
 
@@ -320,7 +320,7 @@ def edit_person_bd(
                 'codeword': row[14],
                 'dateAdd': row[15]
             }
-            conn.close()
+            sex.close()
 
             return person
 
@@ -353,8 +353,8 @@ def get_passport(person):
 
 def check_local_database():
     try:
-        conn = connect()
-        conn.close()
+        sex = connect()
+        sex.close()
         return True
     except:
         return False
