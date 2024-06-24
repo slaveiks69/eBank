@@ -43,12 +43,13 @@ function change_val(lastName, firstName, middleName, date, bornCity, source, dat
   $("#slovo").val(lastName);
 }
 
+
 function VB() {
   change_val("", "", "", "", "", "", "", "", "");
   $("#passport").val("");
   $("#nomer").val("");
 
-  $("#passport").mask("АС 9999999"); 
+  $("#passport").mask("АС 9999999");
   change_pass_placeholder("АС *******");
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(1) > div.input-with-top-text > i").innerHTML = "Номер военного билета";
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(2) > i").innerHTML = "Военник выдан";
@@ -62,7 +63,7 @@ function VB() {
   document.querySelector(".passport > li > i").innerHTML = "Военник";
 }
 
-function PASSPORT(){
+function PASSPORT() {
   change_val("", "", "", "", "", "", "", "", "");
   $("#passport").val("");
   $("#nomer").val("");
@@ -97,65 +98,115 @@ function buttonChange(otkuda) {
   }
 }
 
-function passport_mask(){
-  postData('http://localhost:1111/find', { kod: $(".passport").val() })
-          .then((data) => {
-            window.found = null;
+function passport_mask() {
+  return postData('http://localhost:1111/find', { kod: $("#passport").val() })
+    .then((data) => {
+      window.found = null;
 
-            if (data.found == "none") {
-              document.querySelector('#passport').classList.add('nj-top');
-              change_placeholdes("", "", "", "**.**.****", "", "", "**.**.****", "***-***", "");
-              document.querySelector('.bts').classList.add('top');
-              return;
-            }
-            document.querySelector('#passport').classList.remove('nj-top');
+      if (data.found == "none") {
+        document.querySelector('#passport').classList.add('nj-top');
+        change_placeholdes("", "", "", "**.**.****", "", "", "**.**.****", "***-***", "");
+        document.querySelector('.bts').classList.add('top');
+        return;
+      }
+      document.querySelector('#passport').classList.remove('nj-top');
 
-            window.found = data;
+      window.found = data;
 
-            switch (data.s) {
-              case 'ipriziv':
-                date = new Date(Date.parse(data.found.birthDate));
-                date_create = new Date(Date.parse(data.found.passport.creationDate));
+      switch (data.s) {
+        case 'ipriziv':
+          date = new Date(Date.parse(data.found.birthDate));
+          date_create = new Date(Date.parse(data.found.passport.creationDate));
 
-                change_placeholdes(
-                  data.found.lastName,
-                  data.found.firstName,
-                  data.found.middleName,
-                  `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
-                  data.found.passport.bornCity.toUpperCase(),
-                  data.found.passport.source.toUpperCase(),
-                  `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
-                  data.found.passport.code,
-                  data.found.address.toUpperCase(),
-                );
+          change_placeholdes(
+            data.found.lastName,
+            data.found.firstName,
+            data.found.middleName,
+            `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
+            data.found.passport.bornCity.toUpperCase(),
+            data.found.passport.source.toUpperCase(),
+            `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
+            data.found.passport.code,
+            data.found.address.toUpperCase(),
+          );
 
-                break;
-              case 'bank':
-                date = new Date(Date.parse(data.found.birthDate));
-                date_create = new Date(Date.parse(data.found.passportIssueDate));
+          break;
+        case 'bank':
+          date = new Date(Date.parse(data.found.birthDate));
+          date_create = new Date(Date.parse(data.found.passportIssueDate));
 
-                change_placeholdes(
-                  data.found.lastName,
-                  data.found.firstName,
-                  data.found.patronymic,
-                  `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
-                  data.found.birthPlace.toUpperCase(),
-                  data.found.passportIssue.toUpperCase(),
-                  `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
-                  data.found.passportDivisionCode,
-                  data.found.address.toUpperCase(),
-                );
+          change_placeholdes(
+            data.found.lastName,
+            data.found.firstName,
+            data.found.patronymic,
+            `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
+            data.found.birthPlace.toUpperCase(),
+            data.found.passportIssue.toUpperCase(),
+            `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
+            data.found.passportDivisionCode,
+            data.found.address.toUpperCase(),
+          );
 
 
 
-                console.log(data);
-                break;
-            }
+          console.log(data);
+          break;
+      }
 
-            buttonChange(data.s);
+      buttonChange(data.s);
 
-            document.querySelector('.bts').classList.remove('top');
-          });
+      document.querySelector('.bts').classList.remove('top');
+    });
+}
+
+function confirm() {
+  change_placeholdes("", "", "", "**.**.****", "", "", "**.**.****", "***-***", "");
+
+  if (window.found != null) {
+    let p = window.found.found;
+    switch (window.found.s) {
+      case 'ipriziv':
+        date = new Date(Date.parse(p.birthDate));
+        date_create = new Date(Date.parse(p.passport.creationDate));
+
+        change_val(
+          p.lastName,
+          p.firstName,
+          p.middleName,
+          `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
+          p.passport.bornCity.toUpperCase(),
+          p.passport.source.toUpperCase(),
+          `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
+          p.passport.code,
+          p.address.toUpperCase(),
+        );
+
+        break;
+      case 'bank':
+        date = new Date(Date.parse(p.birthDate));
+        date_create = new Date(Date.parse(p.passportIssueDate));
+
+        change_val(
+          p.lastName,
+          p.firstName,
+          p.patronymic,
+          `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
+          p.birthPlace.toUpperCase(),
+          p.passportIssue.toUpperCase(),
+          `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
+          p.passportDivisionCode,
+          p.address.toUpperCase(),
+        );
+
+        $("#nomer").val('+7(' + p.phoneHome.slice(0, 3) + ')' + p.phoneHome.slice(3, 6) + '-' + p.phoneHome.slice(6, 8) + '-' + p.phoneHome.slice(8, 10));
+
+        break;
+    }
+    buttonChange(window.found.s);
+  }
+
+
+  document.querySelector('.bts').classList.add('top');
 }
 
 $(function () {
@@ -183,7 +234,7 @@ $(function () {
   $(".passport").click
     (
       function () {
-        if(this.classList.contains("on"))
+        if (this.classList.contains("on"))
           VB();
         else
           PASSPORT();
@@ -191,63 +242,20 @@ $(function () {
     );
   $(".confirm-button").click(
     function () {
-      change_placeholdes("", "", "", "**.**.****", "", "", "**.**.****", "***-***", "");
-
-      if (window.found != null) {
-        let p = window.found.found;
-        switch (window.found.s) {
-          case 'ipriziv':
-            date = new Date(Date.parse(p.birthDate));
-            date_create = new Date(Date.parse(p.passport.creationDate));
-
-            change_val(
-              p.lastName,
-              p.firstName,
-              p.middleName,
-              `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
-              p.passport.bornCity.toUpperCase(),
-              p.passport.source.toUpperCase(),
-              `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
-              p.passport.code,
-              p.address.toUpperCase(),
-            );
-
-            break;
-          case 'bank':
-            date = new Date(Date.parse(p.birthDate));
-            date_create = new Date(Date.parse(p.passportIssueDate));
-
-            change_val(
-              p.lastName,
-              p.firstName,
-              p.patronymic,
-              `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`,
-              p.birthPlace.toUpperCase(),
-              p.passportIssue.toUpperCase(),
-              `${date_create.getDate().toString().padStart(2, '0')}.${(date_create.getMonth() + 1).toString().padStart(2, '0')}.${date_create.getFullYear()}`,
-              p.passportDivisionCode,
-              p.address.toUpperCase(),
-            );
-
-            $("#nomer").val('+7(' + p.phoneHome.slice(0, 3) + ')' + p.phoneHome.slice(3, 6) + '-' + p.phoneHome.slice(6, 8) + '-' + p.phoneHome.slice(8, 10));
-
-            break;
-        }
-        buttonChange(window.found.s);
-      }
-
-      document.querySelector('.bts').classList.add('top');
+      confirm();
     }
   );
   $(".cancel-button").click
     (
       function () {
+        $("#passport").val("");
         change_placeholdes("", "", "", "**.**.****", "", "", "**.**.****", "***-***", "");
-
+        $("#nomer").val("");
         document.querySelector('.bts').classList.add('top');
+        buttonChange("");
       }
     );
- 
+
   $("#passport").click(function () { $(this).setCursorPosition(0); }).mask("99 99 999999",
     {
       completed: function () {
@@ -328,7 +336,7 @@ $(function () {
 
               buttonChange("def");
 
-              person_to_html(data.person);
+              top.person_to_html(data.person);
 
               add.push(data.person);
 
@@ -361,7 +369,7 @@ $(function () {
 
           buttonChange("def");
 
-          person_to_html(data.person);
+          top.person_to_html(data.person);
 
           add.push(data.person);
 
@@ -374,12 +382,6 @@ $(function () {
   });
 });
 
-function person_to_html(person) {
-  let i = top.document.createElement('i');
-  i.innerHTML = person.id + ' | ' + person.passportSerial + ' | ' + person.lastName[0] + person.firstName[0] + person.patronymic[0];
-  top.document.getElementById('table').appendChild(i);
-}
-
 window.add = [];
 
 $(document).ready(function () {
@@ -388,9 +390,15 @@ $(document).ready(function () {
 
   add = JSON.parse(localStorage.getItem("add"));
   if (add != null)
-    add.forEach((person) => person_to_html(person));
+    add.forEach((person, index) => top.person_to_html(person, index));
   else if (add == null)
     window.add = [];
+
+  if ($("#passport").is('[edit]')) {
+    passport_mask().then(() => { confirm(); });
+
+  }
+  //buttonChange("");
 });
 
 $(window).on("beforeunload", function () {

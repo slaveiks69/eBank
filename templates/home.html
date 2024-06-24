@@ -15,7 +15,10 @@
 
     <script src="{{url_for('static', filename='/client/scripts/w2ui.js')}}"></script>
     <link href="{{url_for('static', filename='/client/css/w2ui.css')}}" rel="stylesheet" />
-    
+    <link href="{{url_for('static', filename='/client/css/w2ui-my.css')}}" rel="stylesheet" />
+    <script type="module">
+        {% include 'base.js' %}
+    </script>
 
     <style>
         @font-face {
@@ -52,6 +55,9 @@
                 <li class="fa-solid fa-file-export menu-item btn-export" /><i class="btn-text">Экспорт банкам</i>
             </div>
             <div class="wfa">
+                <li class="fa-solid fa-area-chart menu-item btn-monitoring" /><i class="btn-text">Мониторинг</i>
+            </div>
+            <div class="wfa">
                 <li class="fa-solid fa-at menu-item btn-at" /><i class="btn-text">Авторы</i>
             </div>
             <div class="wfa transparent">
@@ -60,6 +66,7 @@
         </div>
     </div>
     <div style="background-image: url('/static//images/{{ bgimg }}');" class="right-side">
+        <iframe style="" class="monitoring popup-close" loading="lazy" src="/monitoring"></iframe>
         <div class="window popup-close"></div>
     </div>
 
@@ -76,9 +83,7 @@
 
     <div id="export" class="input-with-top-text absolute drag popup-close">
         <i class="top-text">Экспорт банкам</i>
-        <div id="table" class="export-window">
-            
-        </div>
+        <div id="table" class="export-window"></div>
         <input tabindex="-1" class="button clear" disabled type="button" value="Очистить"/>
         <input tabindex="-1" class="button export" type="button" value="Экспорт"/>
     </div>

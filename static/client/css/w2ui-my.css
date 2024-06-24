@@ -1,0 +1,87 @@
+.w2ui-grid
+{
+    border: none;
+    border-radius: 0px;
+}
+
+.w2ui-overlay .w2ui-overlay-body.w2ui-white {
+    color: #ffffff;
+    text-shadow: none;
+    background-color: #000000;
+    border: none;
+    box-shadow: none;
+}
+
+.w2ui-menu .w2ui-menu-item .menu-icon span {
+    display: flex;
+    justify-content: center;
+}
+
+.w2ui-menu .w2ui-menu-item {
+    color: white;
+    font-family: 'dsk';
+    font-size: 0.8em;
+    align-items: flex-end;
+}
+
+.w2ui-grid .w2ui-grid-body table .w2ui-head
+{
+    background-image: none;
+    color: white;
+    background-color: #000;
+    border-right: 1px solid #444;
+    border-bottom: 1px solid #444;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-even, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-even {
+    border-bottom: none !important;
+}
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-odd, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-odd {
+    border-bottom: none !important;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-even, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-even 
+{
+    background-color: #333;
+    color: white;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-odd, .w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-odd {
+    background-color: #000;
+    color: white;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-selected, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-selected, .w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr td.w2ui-selected, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr td.w2ui-selected 
+{
+    color: inherit !important;
+    background-color: var(--mugen) !important;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-odd:hover, 
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-odd:hover, 
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records table tr.w2ui-even:hover, 
+.w2ui-grid .w2ui-grid-body .w2ui-grid-frecords table tr.w2ui-even:hover
+{
+    color: inherit !important;
+    background-color: var(--mugen) !important;
+}
+
+.w2ui-grid .w2ui-grid-body table .w2ui-row-selected {
+    background-color: var(--mugen) !important;
+}
+
+.w2ui-grid .w2ui-grid-body table .w2ui-col-number 
+{
+    width: 34px;
+    color: white;
+    background-color: #000;
+}
+
+.w2ui-grid .w2ui-grid-body table td {
+    border-right: none;
+}
+
+.w2ui-grid .w2ui-grid-body 
+{
+    background-color: #000;
+}

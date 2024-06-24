@@ -1,9 +1,17 @@
 from flask import Flask, json, render_template, request, redirect, url_for
 from utils import *
 
+
+
 app = Flask(__name__)
 
 app.config['SERVER_NAME'] = 'localhost:1111'
+
+from monitoring import monitoring
+
+app.register_blueprint(monitoring, url_prefix='/')
+
+print(static.pc_ip)
 
 @app.get('/')
 def home():
@@ -31,6 +39,8 @@ def find_people():
         if person != None:
             found = { 'found': person, 's': 'bank' }
 
+            return found
+
     # ipriziv
     if static.loginCheck:
         persons = get_persons()['data']
@@ -46,7 +56,7 @@ import re
 
 def capitalize_tajics(str):
     joins = ' '
-    tajics = ['оглы','уулу','улы']
+    tajics = ['оглы','уулу','улы','угли']
 
     if str.find('-') != -1:
         joins = '-'
@@ -86,6 +96,8 @@ def add_person():
         arg['codeword']
     )
 
+    count_add()
+
     return { 'reload': 'add', 'person': person }
 
 @app.post('/edit-person')
@@ -109,6 +121,8 @@ def edit_person():
         arg['codeword']
     )
 
+    count_add()
+
     return { 'reload': 'edit', 'person': person }
 
 import openpyxl, shutil, os
@@ -130,20 +144,14 @@ def export():
     for person in persons_to_export:
         birthDate = datetime.datetime.strptime(person['birthDate'],"%a, %d %b %Y %H:%M:%S GMT")
         passportIssueDate = datetime.datetime.strptime(person['passportIssueDate'],"%a, %d %b %Y %H:%M:%S GMT")
-
-        #print(birthDate)
-        passportSerial = person['passportSerial']
-        ps = person['passportSerial'].split(' ')
-        if(2 == len(ps)):
-            passportSerial = "АС "+ps[1]
-
+        print(person['passportSerial'])
         sheet.cell(row=row_start, column=1).value = index # индексация с 0
         sheet.cell(row=row_start, column=2).value = person['lastName'] # фамилия
         sheet.cell(row=row_start, column=3).value = person['firstName'] # имя
         sheet.cell(row=row_start, column=4).value = person['patronymic'] # отчество
         sheet.cell(row=row_start, column=5).value = birthDate.strftime("%d.%m.%Y") # дата рождения
         sheet.cell(row=row_start, column=6).value = person['birthPlace'] # место рождения
-        sheet.cell(row=row_start, column=7).value = passportSerial # серия и номер паспорта
+        sheet.cell(row=row_start, column=7).value = ((str)(person['passportSerial'])).encode('cp1251') # серия и номер паспорта
         sheet.cell(row=row_start, column=8).value = person['passportIssue'] # где и когда выдан
         sheet.cell(row=row_start, column=9).value = passportIssueDate.strftime("%d.%m.%Y") # дата выдачи
         sheet.cell(row=row_start, column=10).value = person['passportDivisionCode'] # код подразделения
@@ -200,6 +208,22 @@ total = static.get_total_count()
 def add_get():
     if request.method == 'GET':
         return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck )
+    
+@app.get('/add/<kod>')
+def add_get_kod(kod):
+    if request.method == 'GET':
+        #print(kod)
+        return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod)
+    
+@app.get('/base/')
+def base():
+    rqt = json.loads(request.args.get('request'))
+
+    persons = json.dumps(get_persons_db(rqt['limit'],rqt['offset']))
+
+
+
+    return "{ "+f"\"records\": {persons}, \"total\": {total_count()} "+" }"
 
 if __name__ == '__main__':
     app.run(debug=True)

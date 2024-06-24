@@ -19,21 +19,41 @@ $(".btn-add").click(function () {
   document.getElementById('export').classList.remove("popup-close");
 });
 
-function person_to_html(person) {
-  let i = top.document.createElement('i');
-  i.innerHTML = person.id + ' | ' + person.passportSerial + ' | ' + person.lastName[0] + person.firstName[0] + person.patronymic[0];
+window.person_to_html = function person_to_html(person, index = top.document.querySelector("#table").children.length) {
+  let i = top.document.createElement('div');
+  i.classList.add("export-item");
+  i.innerHTML =
+    "<i>" + person.id + ' | ' + person.passportSerial + ' | ' + person.lastName[0] + person.firstName[0] + person.patronymic[0] + "</i>";
+  let a = top.document.createElement('a');
+  a.classList.add('x');
+  a.innerHTML = "x";
+  a.setAttribute("id",index);
+  a.addEventListener('click', function () {
+    delete_export_item(index);
+  });
+  i.appendChild(a);
   top.document.getElementById('table').appendChild(i);
+}
+
+function delete_export_item(index) {
+  top.document.querySelector("#table").children[index].remove();
+  get_add().splice(index,1);
+
+  top.document.getElementById('table').innerHTML = '';
+  if (get_add() != null)
+    get_add().forEach((person, index) => person_to_html(person, index));
+
+  localStorage.setItem("add", JSON.stringify(get_add()));
 }
 
 $(".btn-export").click(function () {
   let classes = document.getElementById('export').classList;
 
-  if(classes.contains("popup-close"))
-  {
+  if (classes.contains("popup-close")) {
     top.document.getElementById('table').innerHTML = '';
     add = JSON.parse(localStorage.getItem("add"));
     if (add != null)
-      add.forEach((person) => person_to_html(person));
+      add.forEach((person, index) => person_to_html(person, index));
     classes.remove("popup-close");
   }
   else
@@ -59,23 +79,33 @@ $(".btn-db").click(function () {
     window_db.classList.add("popup-close");
 });
 
+$(".btn-monitoring").click(function () {
+  let window = document.querySelector(".monitoring");
 
-//window.frames[0].add
+  if (window.classList.contains("popup-close"))
+    window.classList.remove("popup-close");
+  else
+    window.classList.add("popup-close");
+});
+
+//window.frames[1].add
+
+function get_add() {
+  if (window.frames[1].add != undefined)
+    return window.frames[1].add;
+  else if (add != undefined)
+    return add;
+  return [];
+}
+
 
 $(document).ready(function () {
   $(".export").click(function () {
-    
-    let data1 = [];
-    if (window.frames[0].add != undefined)
-      data1 = window.frames[0].add;
-    else
-      data1 = add;
-
+    let data1 = get_add();
 
     postData('http://localhost:1111/export', { data: data1 })
       .then((data) => {
-        if(data.export == "okay")
-        {
+        if (data.export == "okay") {
           clear_export();
         }
       });
@@ -89,5 +119,5 @@ function clear_export() {
   document.getElementById('table').innerHTML = '';
   let add = [];
   localStorage.setItem("add", JSON.stringify(add));
-  frames[0].window.add.length = 0;
+  frames[1].window.add.length = 0;
 }

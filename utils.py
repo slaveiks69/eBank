@@ -1,4 +1,4 @@
-import requests, urllib.parse
+import requests, urllib.parse, socket
 import datetime
 #from config import *
 import pymssql
@@ -12,6 +12,8 @@ def get_config():
 
 class static:
     session = requests.Session()
+    pc_name = socket.gethostname()
+    pc_ip = socket.gethostbyname(pc_name)
     loginCheck = False
     status = 0
     baseCheck = False
@@ -83,11 +85,97 @@ def get_recruits_statistic():
     #[["deliveredAt",">=","2024-06-03T00:00:00+03"],"and",["deliveredAt","<","2024-06-04T00:00:00+03"]]
     #[[["deliveredAt",">=","2024-06-03T00:00:00+03"],"and",["deliveredAt","<","2024-06-04T00:00:00+03"]],"and",["state","=","Returned"]]
 
+def connect(db = static.cfg["sql"]["database"]):
+    return pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], db)
+
+def total_count():
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        conn = connect()
+
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT count(*) FROM person;")
+
+        row = cursor.fetchone()
+
+        if row == None:
+            return None
+        
+        return row[0]
+    
+def count_add():
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        conn = connect("Day_Statistic")
+
+        db_table = "count_add_edit"
+
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT * FROM dbo.{db_table} WHERE name_pc = '{static.pc_name}';")
+
+        row = cursor.fetchone()
+
+        if row == None:
+            query = f"INSERT INTO dbo.{db_table}(name_pc, ip, count) VALUES('{static.pc_name}', '{static.pc_ip}', 1)"
+            cursor.execute(query)
+            conn.commit()
+        else:
+            query = f"UPDATE dbo.{db_table} SET count = {row[3]+1} WHERE id={row[0]}"
+            cursor.execute(query)
+            conn.commit()        
+
+        conn.close()
+
+
+
+def get_persons_db(limit,offset):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        conn = connect()
+
+        cursor = conn.cursor()
+        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person ORDER BY id OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
+
+        persons = []
+
+        for row in cursor:
+            if row == None:
+                break
+            
+            person = {
+                'id': row[0],
+                'passportSerial': row[1],
+                'lastName': row[2],
+                'firstName': row[3],
+                'patronymic': row[4],
+                'birthDate': row[17],
+                'birthPlace': row[6],
+                'passportIssue': row[7],
+                'passportIssueDate': row[18],
+                'passportDivisionCode': row[9],
+                'address': row[10],
+                'phoneHome': row[11],
+                'phoneMobile': row[12],
+                'recruimentId': row[13],
+                'codeword': row[14],
+                'dateAdd': row[15]
+            }
+
+            persons.append(person)
+
+        conn.close()
+
+        return persons
+
+
 def find_in_bank(kod):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
+        conn = connect()
 
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM person WHERE passport_serial = '{kod}';")
@@ -138,7 +226,7 @@ def add_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
+        conn = connect()
 
         cursor = conn.cursor()
         bd = datetime.datetime.strptime(birth_date,"%d.%m.%Y").strftime("%Y-%m-%d")
@@ -195,7 +283,7 @@ def edit_person_bd(
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
-        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
+        conn = connect()
 
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM person WHERE id = {id};")
@@ -265,7 +353,7 @@ def get_passport(person):
 
 def check_local_database():
     try:
-        conn = pymssql.connect(static.cfg["sql"]["hostname"], static.cfg["sql"]["user"], static.cfg["sql"]["password"], static.cfg["sql"]["database"])
+        conn = connect()
         conn.close()
         return True
     except:

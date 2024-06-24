@@ -49,6 +49,7 @@ input[type="button" i]:disabled:hover{
     width: fit-content;
     font-size: 0.8em;
     padding: 10px;
+    gap: 3px;
     z-index: 3;
     background-color: #000;
     border-radius: 15px;
@@ -56,6 +57,19 @@ input[type="button" i]:disabled:hover{
     border-color: var(--mugen);
     display: flex;
     flex-direction: column;
+}
+
+.export-item
+{
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    gap: 8px;
+}
+
+.x:hover
+{
+    cursor: pointer !important;
 }
 
 .drag:hover
@@ -116,9 +130,14 @@ html
     align-items: center;
 }
 
+.monitoring{
+    width: -webkit-fill-available; height: -webkit-fill-available;margin-left: 3em;position: fixed;
+    border: none;
+}
+
 a
 {
-    color: rgb(107, 216, 235);
+    color: var(--mugen);
     text-decoration: overline;
 }
 

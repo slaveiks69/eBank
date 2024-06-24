@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>eBank | Мониторинг</title>
+
+  <script src="{{url_for('static', filename='/client/scripts/jquery.js')}}"></script>
+  <script src="{{url_for('static', filename='/client/scripts/jquery.maskedinput.js')}}"></script>
+  <link href="{{url_for('static', filename='/client/css/main.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
+  <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
+
+  <style>
+    @font-face {
+        font-family: "dsk";
+        src: local("dsk"),
+        url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
+        url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
+      }
+
+    @font-face {
+      font-family: "Font Awesome 6 Pro";
+      src: local("Font Awesome 6 Pro"),
+      url("{{url_for('static', filename='/client/css/fonts/fa-solid-900.woff2')}}") format("woff2");
+    }
+  </style>
+
+</head>
+
+<body style="background-color: #000 !important;">
+  <input class="button btn-reset" type="button" value="Сбросить статистику" />
+</body>
+<script src="{{url_for('static', filename='/client/scripts/monitoring/main.js')}}"></script>
+
+</html>
