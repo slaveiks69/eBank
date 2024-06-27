@@ -13,6 +13,8 @@ const postData = async (url = '', data = {}) => {
   return response.json();
 };
 
+$("#passport").mask("** ** ******")
+
 $(".btn-add").click(function () {
   $(".popup").removeClass("popup-close");
   document.querySelector('.popup').src = "add/";
@@ -70,8 +72,21 @@ $(".close-authors").click(function () {
 
 $(".drag").draggable({});
 
+$(".btn-team").click(function () {
+  let window_db = document.querySelector(".team");
+
+  if (window_db.classList.contains("popup-close"))
+    window_db.classList.remove("popup-close");
+  else
+    window_db.classList.add("popup-close");
+});
+
+$(".db_refresh").click(function () {
+  w2ui['grid'].reload();
+});
+
 $(".btn-db").click(function () {
-  let window_db = document.querySelector(".window");
+  let window_db = document.querySelector(".window_db");
 
   if (window_db.classList.contains("popup-close"))
     window_db.classList.remove("popup-close");
@@ -88,11 +103,11 @@ $(".btn-monitoring").click(function () {
     window.classList.add("popup-close");
 });
 
-//window.frames[1].add
+//window.frames[2].add
 
 function get_add() {
-  if (window.frames[1].add != undefined)
-    return window.frames[1].add;
+  if (window.frames[2].add != undefined)
+    return window.frames[2].add;
   else if (add != undefined)
     return add;
   return [];
@@ -119,5 +134,5 @@ function clear_export() {
   document.getElementById('table').innerHTML = '';
   let add = [];
   localStorage.setItem("add", JSON.stringify(add));
-  frames[1].window.add.length = 0;
+  frames[2].window.add.length = 0;
 }

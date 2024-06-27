@@ -137,7 +137,7 @@ def get_persons_db(limit,offset):
         sex = connect()
 
         cursor = sex.cursor()
-        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person ORDER BY id OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
+        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person ORDER BY id DESC OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
 
         persons = []
 
@@ -147,7 +147,7 @@ def get_persons_db(limit,offset):
             
             person = {
                 'id': row[0],
-                'passportSerial': row[1],
+                'passportSerial': str((row[1])),
                 'lastName': row[2],
                 'firstName': row[3],
                 'patronymic': row[4],
@@ -163,7 +163,9 @@ def get_persons_db(limit,offset):
                 'codeword': row[14],
                 'dateAdd': row[15]
             }
-
+            import codecs
+            print(codecs.decode(row[1], codecs.utf_8_encode, 'strict'))
+            # print(row[1])
             persons.append(person)
 
         sex.close()
@@ -239,11 +241,9 @@ def add_person_bd(
         cursor.execute(f"SELECT * FROM person WHERE id = {cursor.lastrowid};")
         row = cursor.fetchone()
 
-        #print(row)
-
         person = {
             'id': row[0],
-            'passportSerial': row[1],
+            'passportSerial': passport_serial,
             'lastName': row[2],
             'firstName': row[3],
             'patronymic': row[4],

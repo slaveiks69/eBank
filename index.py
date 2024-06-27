@@ -2,15 +2,15 @@ import datetime
 from flask import Flask, json, render_template, request, redirect, url_for
 from utils import *
 
-
-
 app = Flask(__name__)
 
 app.config['SERVER_NAME'] = 'localhost:1111'
 
 from monitoring import monitoring
+from team import team
 
 app.register_blueprint(monitoring, url_prefix='/')
+app.register_blueprint(team, url_prefix='/')
 
 print(static.pc_ip)
 
@@ -75,7 +75,7 @@ def capitalize_tajics(str):
 
     x = joins.join(a for a in b)
 
-    return x
+    return x.strip()
 
 @app.post('/add-person')
 def add_person():
@@ -152,7 +152,7 @@ def export():
         sheet.cell(row=row_start, column=4).value = person['patronymic'] # отчество
         sheet.cell(row=row_start, column=5).value = birthDate.strftime("%d.%m.%Y") # дата рождения
         sheet.cell(row=row_start, column=6).value = person['birthPlace'] # место рождения
-        sheet.cell(row=row_start, column=7).value = (str)(person['passportSerial']).encode('cp1251') # серия и номер паспорта
+        sheet.cell(row=row_start, column=7).value = person['passportSerial'] # серия и номер паспорта
         sheet.cell(row=row_start, column=8).value = person['passportIssue'] # где и когда выдан
         sheet.cell(row=row_start, column=9).value = passportIssueDate.strftime("%d.%m.%Y") # дата выдачи
         sheet.cell(row=row_start, column=10).value = person['passportDivisionCode'] # код подразделения
@@ -225,6 +225,10 @@ def base():
 
 
     return "{ "+f"\"records\": {persons}, \"total\": {total_count()} "+" }"
+
+@app.post('/search/')
+def search():
+    return ...
 
 if __name__ == '__main__':
     app.run(debug=True)

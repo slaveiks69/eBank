@@ -8,16 +8,20 @@
   <script src="{{url_for('static', filename='/client/scripts/jquery.js')}}"></script>
   <script src="{{url_for('static', filename='/client/scripts/jquery.maskedinput.js')}}"></script>
   <link href="{{url_for('static', filename='/client/css/main.css')}}" rel="stylesheet" />
+  <link href="{{url_for('static', filename='/client/css/monitoring.css')}}" rel="stylesheet" />
+
   <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
   <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
 
+  <script src="{{url_for('static', filename='/client/scripts/donut.min.js')}}"></script>
+
   <style>
     @font-face {
-        font-family: "dsk";
-        src: local("dsk"),
-        url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
-        url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
-      }
+      font-family: "dsk";
+      src: local("dsk"),
+      url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
+      url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
+    }
 
     @font-face {
       font-family: "Font Awesome 6 Pro";
@@ -29,7 +33,15 @@
 </head>
 
 <body style="background-color: #000 !important;">
-  <input class="button btn-reset" type="button" value="Сбросить статистику" />
+  <div style="width: fit-content; gap: 10px;">
+    <div class="statistic_count">
+      <div id="container"></div>
+      <i class="stat_child">Царь горы за день по вбитию:</i>
+    </div>
+
+    <input class="button btn-update" type="button" value="Обновить" />
+    <input class="button btn-reset" disabled type="button" value="Сбросить статистику" />
+  </div>
 </body>
 <script src="{{url_for('static', filename='/client/scripts/monitoring/main.js')}}"></script>
 

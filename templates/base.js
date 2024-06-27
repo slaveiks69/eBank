@@ -4,6 +4,7 @@ let grid = new w2grid({
     box: '.window',
     method: 'GET',
     show: {
+        //toolbar: true,
         lineNumbers: true
     },
     fixedBody: true,
@@ -30,8 +31,9 @@ let grid = new w2grid({
         //{ field: 'team', text: 'Last Name', size: '200px' }
     ],
     contextMenu: [
-        { id: 'view', text: "Просмотр", icon: "fa fa-info" },
-        { id: 'edit', text: "Редактировать", icon: "w2ui-icon-pencil" }
+        //{ id: 'view', text: "Просмотр", icon: "fa fa-info" },
+        { id: 'edit', text: "Редактировать", icon: "fa fa-pencil" },
+        { id: 'delete', text: "Удалить", icon: "fa fa-trash" }
     ],
     onContextMenuClick(event){
         //console.log(event);

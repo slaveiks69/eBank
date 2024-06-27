@@ -131,8 +131,17 @@ html
 }
 
 .monitoring{
-    width: -webkit-fill-available; height: -webkit-fill-available;margin-left: 3em;position: fixed;
+    width: -webkit-fill-available; height: -webkit-fill-available;margin-left: 1.5em;position: fixed;
     border: none;
+    padding: 3em;
+    background-color: #000;
+}
+
+.team{
+    width: -webkit-fill-available; height: -webkit-fill-available;margin-left: 1.5em;position: fixed;
+    border: none;
+    padding: 3em;
+    background-color: #000;
 }
 
 a
@@ -313,10 +322,34 @@ input::placeholder
     background-color: var(--red) !important;
 }
 
+.window_db
+{
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+    margin-left: 1.5em;
+    position: absolute;
+    background-color: #000;
+}
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px;
+}
+
+.toolbar .pointer {
+    cursor: pointer;
+}
+
 .window
 {
     width: -webkit-fill-available;
     height: -webkit-fill-available;
-    margin-left: 3em;
 }
+
+.toolbar .search{
+    min-width: 50px;
+}
+
 

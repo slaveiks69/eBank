@@ -1,0 +1,164 @@
+.vidan
+{
+    width: auto;
+}
+
+.pointer:hover
+{
+    cursor: pointer;
+    background-color: var(--hred);
+}
+
+.passport:hover
+{
+    cursor: pointer;
+    background-color: var(--hblue) !important;
+}
+
+.ptext
+{
+    font-family: "dsk";
+    font-size: 1.1em;
+}
+
+body
+{
+    background-color: rgba(0, 0, 0, 0.6) !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.card
+{
+    font-family: "dsk";
+    border: none;
+    border-radius: 5px;
+    font-size: 0.7em;
+    color: white;
+    font-weight: 700;
+    text-transform:uppercase;
+    width: -webkit-fill-available;
+    padding: 3px;
+}
+
+.card-color-1
+{
+    background: #f37e44;
+}
+
+.card-color-2
+{
+    background: #3b99eb;
+}
+
+.card-color-3
+{
+    background: #7cf181;
+}
+
+.card-color-4
+{
+    background: #f35a5a
+}
+
+.card-grid
+{
+    padding: 3px;
+    display: flex;
+    justify-content: space-between;
+    gap: 7px;
+    padding-top: 9px !important;
+}
+
+.upper-case
+{
+    text-transform:uppercase;
+}
+
+.accept-button
+{
+    font-family: "dsk";
+    margin-top: 8px;
+    padding: 10px 80px;
+    border-color: var(--mugen);
+    color: white;
+    background-color: #000;
+    border-radius: 10px;
+    border-style: dotted;
+}
+
+input[type="button" i]:disabled {
+    border-color: var(--red) !important;
+    border-style: solid !important;
+    background-color: rgba(201, 0, 0, 0.348) !important;
+    color:rgba(201, 0, 0, 0.348) !important;
+}
+
+input[type="button" i]:disabled:hover{
+    border-color: var(--red) !important;
+    background-color: rgba(201, 0, 0, 0.348) !important;
+}
+
+.accept-button:hover
+{
+    background-color: rgba(255, 255, 255, 0.075);
+    border-style: solid;
+}
+
+.rf
+{
+    border: none;
+    color: white;
+    background-color: var(--semi-black);
+}
+
+.bts:hover
+{
+    border-style: solid;
+}
+
+.confirm-button
+{
+    width: -webkit-fill-available;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.confirm-button:hover
+{
+    background-color: var(--blue);
+}
+
+.cancel-button
+{
+    width: 80px;
+    border-radius: 0px 10px 10px 0px;
+    margin-left: 2px;
+}
+
+.cancel-button:hover
+{
+    background-color: var(--hred);
+}
+
+.bts
+{
+    display: flex;
+    width: -webkit-fill-available;
+    border-style: dashed;
+    margin-top: 13px;
+    margin-bottom: 3px;
+    border-color: var(--red);
+    border-radius: 13px;
+}
+
+.top
+{
+    display: none;
+}
+
+.nj-top
+{
+    border-color: var(--hred) !important;
+}

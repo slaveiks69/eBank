@@ -49,6 +49,9 @@
                 <li class="fa-solid fa-database menu-item btn-db" /><i class="btn-text">База</i>
             </div>
             <div class="wfa">
+                <li class="fa-solid fa-users menu-item btn-team" /><i class="btn-text">Команды</i>
+            </div>
+            <div class="wfa">
                 <li class="fa-solid fa-user-plus menu-item btn-add" /><i class="btn-text">Добавить</i>
             </div>
             <div class="wfa">
@@ -67,7 +70,23 @@
     </div>
     <div style="background-image: url('/static//images/{{ bgimg }}');" class="right-side">
         <iframe style="" class="monitoring popup-close" loading="lazy" src="/monitoring"></iframe>
-        <div class="window popup-close"></div>
+        <div class="window_db popup-close">
+            <div class="toolbar">
+                <li class="fa-solid fa-refresh toolbar pointer db_refresh"></li>
+                <input id="id" class="toolbar search" type="text" placeholder="ID" />
+                <input id="passport" class="toolbar search" type="text" placeholder="Серия и номер паспорта" />
+                <input id="fam" class="toolbar search" type="text" placeholder="Фамилия" />
+                <input id="nam" class="toolbar search" type="text" placeholder="Имя" />
+                <input id="par" class="toolbar search" type="text" placeholder="Отчество" />
+                <input id="card" class="toolbar search" type="text" placeholder="Карта" />
+                <li class="fa-solid fa-trash toolbar pointer input_clear"></li>
+                <div style="width: 250%;"></div>
+            </div>
+            <div class="window">
+                
+            </div>
+        </div>
+        <iframe style="" class="team popup-close" loading="lazy" src="/team"></iframe>
     </div>
 
     <div id="at" class="author-block popup-close">

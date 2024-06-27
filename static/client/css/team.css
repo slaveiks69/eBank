@@ -1,0 +1,11 @@
+body {
+    width: -webkit-fill-available;
+}
+
+.hwfa {
+    height: -webkit-fill-available;
+}
+
+#outgoing_team_table {
+    width: 310px;
+}

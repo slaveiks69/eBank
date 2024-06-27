@@ -1,0 +1,49 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>eBank | Команды</title>
+
+    <script src="{{url_for('static', filename='/client/scripts/jquery.js')}}"></script>
+    <script src="{{url_for('static', filename='/client/scripts/jquery.maskedinput.js')}}"></script>
+
+    <link href="{{url_for('static', filename='/client/css/main.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static', filename='/client/css/team.css')}}" rel="stylesheet" />
+
+    <script src="{{url_for('static', filename='/client/scripts/w2ui.js')}}"></script>
+    <link href="{{url_for('static', filename='/client/css/w2ui.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static', filename='/client/css/w2ui-my.css')}}" rel="stylesheet" />
+
+    <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
+
+    <script src="{{url_for('static', filename='/client/scripts/donut.min.js')}}"></script>
+
+    <style>
+        @font-face {
+            font-family: "dsk";
+            src: local("dsk"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Font Awesome 6 Pro";
+            src: local("Font Awesome 6 Pro"),
+            url("{{url_for('static', filename='/client/css/fonts/fa-solid-900.woff2')}}") format("woff2");
+        }
+    </style>
+
+</head>
+
+<body class="hwfa">
+    <div class="hwfa">
+        <div id="outgoing_team_table" class="hwfa">
+        </div>
+
+    </div>
+</body>
+<script src="{{url_for('static', filename='/client/scripts/team/main.js')}}"></script>
+
+</html>

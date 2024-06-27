@@ -1,0 +1,12 @@
+.statistic_count {
+    display: flex;
+    font-size: 0.7em;
+    gap: 10px;
+    align-items: center;
+}
+
+.stat_child {
+    display: flex;
+    flex-direction: column;
+    gap:3px;
+}

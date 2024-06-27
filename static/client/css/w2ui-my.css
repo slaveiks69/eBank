@@ -17,6 +17,11 @@
     justify-content: center;
 }
 
+.w2ui-menu-item:hover
+{
+    background-color: #262626 !important;
+}
+
 .w2ui-menu .w2ui-menu-item {
     color: white;
     font-family: 'dsk';
