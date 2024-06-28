@@ -128,26 +128,39 @@ def count_add():
 
         sex.close()
 
+def passportSerial(a):
+    if (len(a.split(' ')) == 4):
+        return "АС "+a[2:]
+    return a
 
-
-def get_persons_db(limit,offset):
+def get_persons_db(limit,offset,id = "", passport = "", fam = "", nam = "", par = "", card = ""):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
         sex = connect()
 
+        id = f"WHERE CAST(person.id as CHAR) LIKE '{id}%'"
+        fam = f"AND first_name LIKE '{fam}%'"
+        nam = f"AND last_name LIKE '{nam}%'"
+        par = f"AND patronymic LIKE '{par}%'"
+        passport = f"AND person.passport_serial LIKE '%{passport}%'"
+        if card != "":
+            card = f"AND account_number LIKE '%{card}%'"
+
         cursor = sex.cursor()
-        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person ORDER BY id DESC OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
+        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person {id} {fam} {nam} {par} {passport} {card}  ORDER BY id DESC OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
 
         persons = []
+        i = 0
 
         for row in cursor:
             if row == None:
                 break
             
-            person = {
+            dungeonmaster = {
+                'recid': i,
                 'id': row[0],
-                'passportSerial': str((row[1])),
+                'passportSerial': passportSerial(row[1]),
                 'lastName': row[2],
                 'firstName': row[3],
                 'patronymic': row[4],
@@ -163,10 +176,8 @@ def get_persons_db(limit,offset):
                 'codeword': row[14],
                 'dateAdd': row[15]
             }
-            import codecs
-            print(codecs.decode(row[1], codecs.utf_8_encode, 'strict'))
-            # print(row[1])
-            persons.append(person)
+            i = i + 1
+            persons.append(dungeonmaster)
 
         sex.close()
 
@@ -187,7 +198,7 @@ def find_in_bank(kod):
         if row == None:
             return None
 
-        person = {
+        dungeonmaster = {
             'id': row[0],
             'passportSerial': row[1],
             'lastName': row[2],
@@ -207,7 +218,7 @@ def find_in_bank(kod):
         }
         sex.close()
 
-        return person
+        return dungeonmaster
 
 def add_person_bd(
         passport_serial, 
@@ -241,7 +252,7 @@ def add_person_bd(
         cursor.execute(f"SELECT * FROM person WHERE id = {cursor.lastrowid};")
         row = cursor.fetchone()
 
-        person = {
+        dungeonmaster = {
             'id': row[0],
             'passportSerial': passport_serial,
             'lastName': row[2],
@@ -261,7 +272,7 @@ def add_person_bd(
         }
         sex.close()
 
-        return person
+        return dungeonmaster
 
 def edit_person_bd(
         id,
@@ -302,7 +313,7 @@ def edit_person_bd(
             cursor.execute(f"SELECT * FROM person WHERE id = {id};")
             row = cursor.fetchone()
 
-            person = {
+            dungeonmaster = {
                 'id': row[0],
                 'passportSerial': row[1],
                 'lastName': row[2],
@@ -322,7 +333,7 @@ def edit_person_bd(
             }
             sex.close()
 
-            return person
+            return dungeonmaster
 
 
 def get_persons(take = 0):

@@ -226,9 +226,25 @@ def base():
 
     return "{ "+f"\"records\": {persons}, \"total\": {total_count()} "+" }"
 
-@app.post('/search/')
+@app.post('/search')
 def search():
-    return ...
+    print(request.data)
+    rqt = json.loads(request.data)
+
+    persons = json.dumps(
+        get_persons_db(
+            rqt['data']['limit'],
+            rqt['data']['offset'],
+            rqt['data']['id'],
+            rqt['data']['passport'],
+            rqt['data']['lastName'],
+            rqt['data']['firstName'],
+            rqt['data']['middleName'],
+            rqt['data']['card']
+        )
+    )
+
+    return persons
 
 if __name__ == '__main__':
     app.run(debug=True)

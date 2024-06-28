@@ -13,7 +13,7 @@ const postData = async (url = '', data = {}) => {
   return response.json();
 };
 
-$("#passport").mask("** ** ******")
+$("#passport").mask("** ** ******");
 
 $(".btn-add").click(function () {
   $(".popup").removeClass("popup-close");
@@ -29,7 +29,7 @@ window.person_to_html = function person_to_html(person, index = top.document.que
   let a = top.document.createElement('a');
   a.classList.add('x');
   a.innerHTML = "x";
-  a.setAttribute("id",index);
+  a.setAttribute("id", index);
   a.addEventListener('click', function () {
     delete_export_item(index);
   });
@@ -39,7 +39,7 @@ window.person_to_html = function person_to_html(person, index = top.document.que
 
 function delete_export_item(index) {
   top.document.querySelector("#table").children[index].remove();
-  get_add().splice(index,1);
+  get_add().splice(index, 1);
 
   top.document.getElementById('table').innerHTML = '';
   if (get_add() != null)
