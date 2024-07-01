@@ -13,8 +13,6 @@ const postData = async (url = '', data = {}) => {
   return response.json();
 };
 
-$("#passport").mask("** ** ******");
-
 $(".btn-add").click(function () {
   $(".popup").removeClass("popup-close");
   document.querySelector('.popup').src = "add/";
@@ -82,6 +80,18 @@ $(".btn-team").click(function () {
 });
 
 $(".db_refresh").click(function () {
+  w2ui['grid'].reload().then(() => {
+    window.update();
+  });
+});
+
+$(".input_clear").click(function () {
+  $("#id").val("");
+  $("#passport").val("");
+  $("#fam").val("");
+  $("#nam").val("");
+  $("#par").val("");
+  $("#card").val("");
   w2ui['grid'].reload();
 });
 

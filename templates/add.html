@@ -52,7 +52,7 @@
         <div class="flex">
           <div class="input-with-top-text">
             <i class="top-text">Серия и номер паспорта</i>
-            <input id="passport" placeholder="** ** ******" type="text" {% if edit_kod %}edit value="{{ edit_kod }}"{% endif %} />
+            <input id="passport" placeholder="** ** ******" type="text" {% if vb %}vb{% endif %} {% if edit_kod %}edit="{{ edit_kod }}"{% endif %} />
           </div>
           <div class="bts top">
             <input class="confirm-button rf" type="button" value="✓" />

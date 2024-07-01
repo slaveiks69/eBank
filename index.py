@@ -213,8 +213,10 @@ def add_get():
 @app.get('/add/<kod>')
 def add_get_kod(kod):
     if request.method == 'GET':
-        #print(kod)
-        return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod)
+        vb = False
+        if "АС" in kod:
+            vb = True
+        return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod, vb=vb)
     
 @app.get('/base/')
 def base():

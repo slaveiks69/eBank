@@ -394,9 +394,16 @@ $(document).ready(function () {
   else if (add == null)
     window.add = [];
 
-  if ($("#passport").is('[edit]')) {
-    passport_mask().then(() => { confirm(); });
 
+
+  
+
+  if ($("#passport").is('[edit]')) {
+    if ($("#passport").is('[vb]'))
+      VB();
+    $("#passport").val($("#passport").attr('edit'));
+    
+    passport_mask().then(() => { confirm(); });
   }
   //buttonChange("");
 });

@@ -1,3 +1,54 @@
+.w2ui-popup 
+{
+    font-family: 'dsk';
+    color: white;
+    background-color: #000;
+    border: none;
+}
+
+.w2ui-popup-title
+{
+    font-family: 'dsk';
+    color: white !important;
+    background-color: #000 !important;
+    border-bottom: none !important;
+    border: none;
+}
+
+.w2ui-popup-body
+{
+    font-family: 'dsk';
+    color: white !important;
+    background-color: #000 !important;
+    padding: 2em;
+    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: none;
+}
+
+.ab
+{
+    border-color: var(--hred) !important;
+    font-size: 1.1em !important;
+    text-align: center;
+    font-family: 'dsk';
+    width: 50% !important;
+}
+
+.w2ui-popup-buttons
+{
+    font-family: 'dsk';
+    color: white !important;
+    border-top: none !important;
+    background-color: #000 !important;
+    border: none;
+    display: flex;
+    justify-content: center;
+}
+
 .w2ui-grid
 {
     border: none;

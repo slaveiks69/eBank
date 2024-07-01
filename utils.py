@@ -130,7 +130,7 @@ def count_add():
 
 def passportSerial(a):
     if (len(a.split(' ')) == 4):
-        return "АС "+a[2:]
+        return "АС"+a[2:]
     return a
 
 def get_persons_db(limit,offset,id = "", passport = "", fam = "", nam = "", par = "", card = ""):
@@ -140,15 +140,15 @@ def get_persons_db(limit,offset,id = "", passport = "", fam = "", nam = "", par 
         sex = connect()
 
         id = f"WHERE CAST(person.id as CHAR) LIKE '{id}%'"
-        fam = f"AND first_name LIKE '{fam}%'"
-        nam = f"AND last_name LIKE '{nam}%'"
+        nam = f"AND first_name LIKE '{nam}%'"
+        fam = f"AND last_name LIKE '{fam}%'"
         par = f"AND patronymic LIKE '{par}%'"
         passport = f"AND person.passport_serial LIKE '%{passport}%'"
         if card != "":
             card = f"AND account_number LIKE '%{card}%'"
 
         cursor = sex.cursor()
-        cursor.execute(f"SELECT *, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104) FROM person {id} {fam} {nam} {par} {passport} {card}  ORDER BY id DESC OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
+        cursor.execute(f"SELECT person.*, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104), person_team.outgoing, team, account_number FROM person LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial LEFT OUTER JOIN person_team ON person.passport_serial = person_team.passport_serial LEFT OUTER JOIN recruitment_office_name ON recruitment_office_name.id = person.recruitment_office_id LEFT OUTER JOIN team ON person_team.outgoing = team.outgoing LEFT OUTER JOIN person_orphan ON person.passport_serial = person_orphan.passport_serial {id} {fam} {nam} {par} {passport} {card}  ORDER BY person.id DESC OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
 
         persons = []
         i = 0
@@ -174,8 +174,17 @@ def get_persons_db(limit,offset,id = "", passport = "", fam = "", nam = "", par 
                 'phoneMobile': row[12],
                 'recruimentId': row[13],
                 'codeword': row[14],
-                'dateAdd': row[15]
+                'dateAdd': row[15],
+                'outgoing': row[19],
+                'team': row[20],
+                'accountNumber': row[21]
             }
+            
+            if row[20] != None:
+                print(row, row[20])
+                if (int)(row[20]) < static.cfg['bank']['inside']:
+                    dungeonmaster['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_inteam']}" }
+
             i = i + 1
             persons.append(dungeonmaster)
 
