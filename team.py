@@ -3,15 +3,14 @@ from utils import *
 
 team = Blueprint('team', __name__)
 
-url = '/team'
 
-@team.get(url)
+@team.get('/')
 def monitoring_home():
   
 
     return render_template('team.html')
 
-@team.get(url+'/outgoing')
+@team.get('/outgoing')
 def outgoing():
     rqt = json.loads(request.args.get('request'))
 

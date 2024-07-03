@@ -44,10 +44,10 @@ let grid = new w2grid({
     columns: [
         { field: 'id', text: 'ID', size: '50px', sortable: true },
         { field: 'passportSerial', text: 'Серия и номер паспорта', size: '100px' },
-        { field: 'lastName', text: 'Фамилия', size: '100px', sortable: true },
-        { field: 'firstName', text: 'Имя', size: '80px', sortable: true },
+        { field: 'last_name', text: 'Фамилия', size: '100px', sortable: true },
+        { field: 'first_name', text: 'Имя', size: '80px', sortable: true },
         { field: 'patronymic', text: 'Отчество', size: '120px', sortable: true },
-        { field: 'birthDate', text: 'День рождения', size: '100px' },
+        { field: 'birth_date', text: 'День рождения', size: '100px', sortable: true },
         { field: 'birthPlace', text: 'Место рождения', size: '100px' },
         { field: 'passportIssue', text: 'Паспорт выдан', size: '100px' },
         { field: 'passportIssueDate', text: 'Дата выдачи пасспорта', size: '80px' },

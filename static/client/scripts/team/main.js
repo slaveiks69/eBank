@@ -1,6 +1,6 @@
 let grid = new w2grid({
     name: 'outgoing_grid',
-    url: 'team/outgoing',
+    url: '/team/outgoing',
     box: '#outgoing_team_table',
     method: 'GET',
     show: {

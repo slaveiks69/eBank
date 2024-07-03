@@ -55,7 +55,7 @@ function VB() {
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(2) > i").innerHTML = "Военник выдан";
   let now_date = new Date(Date.now());
   document.querySelector("body > div:nth-child(2) > div > div > div.card-grid").classList.add("popup-close");
-  $("#vidan").val("ОБЪЕДИНЕННОЙ МУНИЦИПАЛЬНОЙ ПРИЗЫВНОЙ КОМИССИЕЙ Г.МОСКВЫ");
+  $("#vidan").val("ВОЕННЫМ КОМИССАРИАТОМ Г. МОСКВЫ");//"ОБЪЕДИНЕННОЙ МУНИЦИПАЛЬНОЙ ПРИЗЫВНОЙ КОМИССИЕЙ Г.МОСКВЫ");
   $("#date").val(`${now_date.getDate().toString().padStart(2, '0')}.${(now_date.getMonth() + 1).toString().padStart(2, '0')}.${now_date.getFullYear()}`);
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(4) > div:nth-child(2)").classList.add("popup-close");
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(10)").classList.add("popup-close");
@@ -331,9 +331,8 @@ $(function () {
           .then((data) => {
             if (data.reload == "edit") {
               change_val("", "", "", "", "", "", "", "", "");
-              $("#passport").val("");
               $("#nomer").val("");
-
+              $("#passport").val("").focus();
               buttonChange("def");
 
               top.person_to_html(data.person);
@@ -343,6 +342,7 @@ $(function () {
               localStorage.setItem("add", JSON.stringify(add));
             }
           });
+          
         return;
       }
 
@@ -364,7 +364,7 @@ $(function () {
       .then((data) => {
         if (data.reload == "add") {
           change_val("", "", "", "", "", "", "", "", "");
-          $("#passport").val("");
+
           $("#nomer").val("");
 
           buttonChange("def");
@@ -376,6 +376,9 @@ $(function () {
           localStorage.setItem("add", JSON.stringify(add));
         }
       });
+      
+      $("#passport").val("").focus();
+
 
     //window.found = "{ 'found': 'none' }";
     //buttonChange('non');

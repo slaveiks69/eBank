@@ -3,15 +3,14 @@ from utils import *
 
 monitoring = Blueprint('monitoring', __name__)
 
-url = '/monitoring'
 
-@monitoring.get(url)
+@monitoring.get('/')
 def monitoring_home():
   
 
     return render_template('monitoring.html')
 
-@monitoring.get(f'{url}/count')
+@monitoring.get('/count')
 def get_count():
     sex = connect("Day_Statistic")
 
@@ -37,7 +36,7 @@ def get_count():
 
 
 
-@monitoring.get(f'{url}/reset')
+@monitoring.get('/reset')
 def reset_stat():
     sex = connect("Day_Statistic")
 
