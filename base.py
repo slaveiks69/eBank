@@ -43,19 +43,19 @@ def base_get():
 
 @base.post('/search')
 def search():
-    print(request.data)
+    #print(request.data)
     rqt = json.loads(request.data)
 
     persons = json.dumps(
         get_persons_db(
-            rqt['data']['limit'],
-            rqt['data']['offset'],
-            rqt['data']['id'],
-            rqt['data']['passport'],
-            rqt['data']['lastName'],
-            rqt['data']['firstName'],
-            rqt['data']['middleName'],
-            rqt['data']['card']
+            limit = rqt['data']['limit'],
+            offset = rqt['data']['offset'],
+            id = rqt['data']['id'],
+            passport = rqt['data']['passport'],
+            fam=rqt['data']['lastName'],
+            nam=rqt['data']['firstName'],
+            par=rqt['data']['middleName'],
+            card=rqt['data']['card']
         )
     )
 

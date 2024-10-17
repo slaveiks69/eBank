@@ -39,10 +39,19 @@
 </head>
 
 <body class="hwfa">
-    <div class="hwfa">
+    <div class="hwfa flex">
         <div id="outgoing_team_table" class="hwfa">
         </div>
-
+        
+        <div class="hwfa wwfa">
+            <div class="flex gap" >
+                <input id="ishn" type="text" placeholder="Исходящий номер" />
+                <input id="create_team" style="margin-top: 0px !important; max-width: 180px;" class="button" type="button" value="Создать команду" />
+                <div id="team_info" style="font-size: 0.6em; font-weight: 600; margin-top: auto; margin-bottom: auto;"></div>
+            </div>
+            <div id="team_table" style="position: fixed;" class="hwfa wwfa">
+            </div>
+        </div>
     </div>
 </body>
 <script src="{{url_for('static', filename='/client/scripts/team/main.js')}}"></script>

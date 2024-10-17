@@ -48,7 +48,7 @@ function update(data) {
         data1.push({ 'value': count, name: names });
     });
 
-    colors_a = ['#fd5e58', '#7fd8be', '#d0f4de', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'];
+    colors_a = ['#d67ad9', '#ad82af', '#c796c7', '#d3c2d3', '#d3c2d3', '#d3c2d3', '#d3c2d3', '#ffffff', '#ffffff', '#ffffff', '#ffffff', '#ffffff'];
 
     const myDonut = donut({
         el: document.getElementById('container'),
@@ -66,13 +66,16 @@ function update(data) {
                 a = "🔥💪";
                 break;
         }
-        i.innerHTML = (index + 1) + " | " + e.pc_name + " | " + e.pc_ip + " | " + e.count + "шт. " + a;
+        i.innerHTML = (index + 1) + " | " + e.pc_name + " | " + e.pc_ip + " | <h3 style=\"display: contents;\">" + e.count + "</h3>шт. " + a;
         let b = "";
         switch (index) {
             case 0:
-                b = "font-size: 1.25em; text-shadow: 0 0 5px #fce100;"
+                b = "font-size: 1.3em; text-shadow: 0 0 5px "+colors_a[0]+", 0 0 5px "+colors_a[0]+";"
                 break;
             case 1:
+                b = "font-size: 1.2em; text-shadow: 0 0 3px "+colors_a[0]+";"
+                break;
+            case 2:
                 b = "font-size: 1.1em;"
                 break;
         }
@@ -84,7 +87,7 @@ function update(data) {
     dataset.forEach((e, index) => a(e, index));
 
     let i = document.createElement("i");
-    i.innerHTML = "Итого: " + sum;
+    i.innerHTML = "Итого: <h3 style=\"display: contents;\">" + sum + "</h3>";
     statistic_count.appendChild(i);
 }
 

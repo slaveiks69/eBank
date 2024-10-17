@@ -33,12 +33,14 @@ class static:
         if self.status == 503: return
         if self.loginCheck == True: return
         
+        uri = f'http://{self.cfg["black"]["host"]}/api/login?database={self.cfg["black"]["database"]}&password={self.cfg["black"]["password"]}'
+        print(uri)
         try:
-            req = self.session.post(f'http://{self.cfg["black"]["host"]}/api/login?database={self.cfg["black"]["database"]}&password={self.cfg["black"]["password"]}')
+            req = self.session.post(uri)
         except requests.exceptions.ConnectionError:
             self.status = 503
             return
-
+        
         if req.status_code != 200:
             self.status = 666
             return
@@ -103,6 +105,22 @@ def total_count():
                 return None
             
             return row[0]
+        
+def total_count_team():
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+
+            cursor = sex.cursor()
+            cursor.execute(f"SELECT count(*) FROM team;")
+
+            row = cursor.fetchone()
+
+            if row == None:
+                return None
+            
+            return row[0]
     
 def count_add():
     static.baseCheck = check_local_database()
@@ -146,9 +164,13 @@ def get_persons_db(limit,offset, sort = "person.id DESC", id = "", passport = ""
             passport = f"AND person.passport_serial LIKE '%{passport}%'"
             if card != "":
                 card = f"AND account_number LIKE '%{card}%'"
+            if sort == "":
+                sort = "person.id DESC"
 
+            sql = f"SELECT person.*, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104), person_team.outgoing, team, account_number FROM person LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial LEFT OUTER JOIN person_team ON person.passport_serial = person_team.passport_serial LEFT OUTER JOIN recruitment_office_name ON recruitment_office_name.id = person.recruitment_office_id LEFT OUTER JOIN team ON person_team.outgoing = team.outgoing LEFT OUTER JOIN person_orphan ON person.passport_serial = person_orphan.passport_serial {id} {fam} {nam} {par} {passport} {card} ORDER BY {sort} OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;"
+            print(sql)
             cursor = sex.cursor()
-            cursor.execute(f"SELECT person.*, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104), person_team.outgoing, team, account_number FROM person LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial LEFT OUTER JOIN person_team ON person.passport_serial = person_team.passport_serial LEFT OUTER JOIN recruitment_office_name ON recruitment_office_name.id = person.recruitment_office_id LEFT OUTER JOIN team ON person_team.outgoing = team.outgoing LEFT OUTER JOIN person_orphan ON person.passport_serial = person_orphan.passport_serial {id} {fam} {nam} {par} {passport} {card} ORDER BY  {sort} OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;")
+            cursor.execute(sql)
 
             persons = []
             i = 0
@@ -198,7 +220,45 @@ def find_in_bank(kod):
         with connect() as sex:
 
             cursor = sex.cursor()
-            cursor.execute(f"SELECT * FROM person WHERE passport_serial = '{kod}';")
+            cursor.execute(f"SELECT *,CONVERT(VARCHAR,birth_date,104) FROM person WHERE passport_serial = '{kod}';")
+
+            row = cursor.fetchone()
+            
+            if row == None:
+                return None
+
+            dungeonmaster = {
+                'id': row[0],
+                'passportSerial': passportSerial(row[1]),
+                'passport': passportSerial(row[1]),
+                'lastName': row[2],
+                'firstName': row[3],
+                'patronymic': row[4],
+                'middleName': row[4],
+                'birthDate': row[5],
+                'birthDateFormated': row[17],
+                'birthPlace': row[6],
+                'passportIssue': row[7],
+                'passportIssueDate': row[8],
+                'passportDivisionCode': row[9],
+                'address': row[10],
+                'phoneHome': row[11],
+                'phoneMobile': row[12],
+                'recruimentId': row[13],
+                'codeword': row[14],
+                'dateAdd': row[15]
+            }
+
+            return dungeonmaster
+
+def find_in_bank_fio(lastName, firstName, middleName):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+
+            cursor = sex.cursor()
+            cursor.execute(f"SELECT *,CONVERT(VARCHAR,birth_date,104) FROM person WHERE last_name = '{lastName}' and first_name = '{firstName}' and patronymic = '{middleName}';")
 
             row = cursor.fetchone()
 
@@ -207,11 +267,13 @@ def find_in_bank(kod):
 
             dungeonmaster = {
                 'id': row[0],
-                'passportSerial': row[1],
+                'passport': passportSerial(row[1]),
                 'lastName': row[2],
                 'firstName': row[3],
                 'patronymic': row[4],
+                'middleName': row[4],
                 'birthDate': row[5],
+                'birthDateFormated': row[17],
                 'birthPlace': row[6],
                 'passportIssue': row[7],
                 'passportIssueDate': row[8],
@@ -349,15 +411,16 @@ def get_persons(take = 0):
         
         time_stamps = get_datetime_now_day()
 
-        uri = f'http://{static.cfg["black"]["host"]}/api/recruits?take={take}&requireTotalCount=true&filter='+urllib.parse.quote_plus(f'[["state","=","CommandDeclared"],"or",["state","=","Delivered"],"or",[["dispatchedAt",">=","{time_stamps[0]}T00:00:00+03"],"and",["dispatchedAt","<","{time_stamps[1]}T00:00:00+03"]]]')
-
+        uri = f'http://{static.cfg["black"]["host"]}/api/recruits?take={take}&requireTotalCount=true&filter='+urllib.parse.quote_plus(f'[["state","=","Delivered"],"or",[["state","=","DeliverDeclared"],"and",[["expectedDate",">=","{time_stamps[0]}T00:00:00+03"],"and",["expectedDate","<","{time_stamps[1]}T00:00:00+03"]]]]')
+        print(uri)
         req = static.session.get(uri)
 
         if req.status_code != 200:
-            ...
+            print(f"\nBLACK NO CONNECT | REASON: {req.reason} | STATUS: {static.status}\n")
+            return {'totalCount':'0'}
 
         v = req.json()
-
+        
         return v
 
 def get_passport(person):

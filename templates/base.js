@@ -67,8 +67,6 @@ let grid = new w2grid({
         { id: 'delete', text: "Удалить", icon: "fa fa-trash" }
     ],
     onLoad(event) {
-
-
         $("#id").keyup(function () {
             timer();
         });
@@ -87,6 +85,10 @@ let grid = new w2grid({
         $("#card").keyup(function () {
             timer();
         });
+        if (($("#id").val() != "") || ($("#passport").val() != "") || ($("#fam").val() != "") || ($("#nam").val() != "") || ($("#par").val() != "") || ($("#card").val() != "")) 
+            {
+                update();
+            }
     },
     onContextMenuClick(event) {
         //console.log(event);
@@ -95,32 +97,44 @@ let grid = new w2grid({
                 var p = grid.get(event.detail.recid).patronymic[0];
                 if (p === "")
                     p = " ";
-                var text = grid.get(event.detail.recid).lastName + " " + grid.get(event.detail.recid).firstName[0] + "." + p +".";
+                var text = grid.get(event.detail.recid).last_name + " " + grid.get(event.detail.recid).first_name[0] + "." + p +".";
                 navigator.clipboard.writeText(text);
                 break;
             case "edit":
-                $(".popup").removeClass("popup-close");
-                document.querySelector('.popup').src = "add/" + grid.get(event.detail.recid).passportSerial;
-                document.getElementById('export').classList.remove("popup-close");
+                open_add(grid.get(event.detail.recid).passportSerial);
                 break;
             case "delete":
                 delete_popup(grid.get(event.detail.recid).id, grid.get(event.detail.recid).passportSerial);
                 break
         }
+    },
+    onDblClick(event){
+        open_add(grid.get(event.detail.recid).passportSerial);
     }
 });
 
-window.check = function check() {
+window.check = function check(id) {
     if ($("#check_input").val().toUpperCase() === "ПОДТВЕРДИТЬ") {
-        alert("delete");
+        postData('http://localhost:1111/delete', { 'id': id })
+            .then((data) => {
+                w2utils.notify('Успешно!', { timeout: 2000, error: false });
+                w2popup.close();
+                w2ui['grid'].reload()
+            });
     }
+}
+
+function open_add(passportSerial) {
+    $(".popup").removeClass("popup-close");
+    document.querySelector('.popup').src = "add/" + passportSerial;
+    document.getElementById('export').classList.remove("popup-close");
 }
 
 function delete_popup(id, passportSerial) {
     w2popup.open({
         title: 'Удаление',
-        body: '<i>Чтобы удалить </i><i style="font-weight: 600; color: var(--hred) !important;font-size: 1.3em;">' + id + '  ' + passportSerial +
+        body: '<i>Чтобы удалить </i><i style="font-weight: 600; color: var(--hred) !important;font-size: 1.3em;">' + id + ' | ' + passportSerial +
             '</i><i>введите \"подтвердить\"</i><input id="check_input" placeholder="ПОДТВЕРДИТЬ" class="ab" type="text"  />' +
-            '<input type="button" class="button check_btn" onclick="check()" style="font-size: 1.1em !important; width: 30%; border-color: var(--hred) !important;" value="Проверить" />',
+            '<input type="button" class="button check_btn" onclick="check('+id+')" style="font-size: 1.1em !important; width: 30%; border-color: var(--hred) !important;" value="Проверить" />',
     });
 }

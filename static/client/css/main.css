@@ -140,7 +140,6 @@ html
 .team{
     width: -webkit-fill-available; height: -webkit-fill-available;margin-left: 1.5em;position: fixed;
     border: none;
-    padding: 3em;
     background-color: #000;
 }
 

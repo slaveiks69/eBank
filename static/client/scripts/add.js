@@ -209,11 +209,22 @@ function confirm() {
   document.querySelector('.bts').classList.add('top');
 }
 
+function close_form() {
+  top.document.querySelector('.popup').classList.add('popup-close');
+  top.document.querySelector('.popup').src = "about:blank";
+}
+
 $(function () {
   $("#kod").mask("999-999");
   $(".pointer").click(function () {
-    top.document.querySelector('.popup').classList.add('popup-close');
-    top.document.querySelector('.popup').src = "about:blank";
+    close_form();
+  });
+  document.body.addEventListener("keyup", (event) => {
+    switch (event.key) {
+      case 'Escape':
+        close_form();
+        break;
+    }
   });
   document.querySelector("#vidan").addEventListener("keyup", (event) => {
     switch (event.key) {
@@ -342,7 +353,7 @@ $(function () {
               localStorage.setItem("add", JSON.stringify(add));
             }
           });
-          
+
         return;
       }
 
@@ -376,8 +387,8 @@ $(function () {
           localStorage.setItem("add", JSON.stringify(add));
         }
       });
-      
-      $("#passport").val("").focus();
+
+    $("#passport").val("").focus();
 
 
     //window.found = "{ 'found': 'none' }";
@@ -399,13 +410,13 @@ $(document).ready(function () {
 
 
 
-  
+
 
   if ($("#passport").is('[edit]')) {
     if ($("#passport").is('[vb]'))
       VB();
     $("#passport").val($("#passport").attr('edit'));
-    
+
     passport_mask().then(() => { confirm(); });
   }
   //buttonChange("");

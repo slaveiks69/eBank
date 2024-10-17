@@ -4,6 +4,7 @@
     color: white;
     background-color: #000;
     border: none;
+    resize: both;
 }
 
 .w2ui-popup-title

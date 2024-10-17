@@ -1,11 +1,33 @@
 body {
     width: -webkit-fill-available;
+    background-color: #000;
 }
 
 .hwfa {
     height: -webkit-fill-available;
 }
 
+#outeam {
+    width: -webkit-fill-available;
+    height: -webkit-fill-available;
+}
+
+.wwfa {
+    width: -webkit-fill-available;
+}
+
 #outgoing_team_table {
-    width: 310px;
+    min-width: 310px;
+}
+
+#ishn {
+    max-width: 108px;
+}
+
+.red {
+    background-color: #db4b4b !important;
+}
+
+.offe {
+    display: none;
 }

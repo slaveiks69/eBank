@@ -8,10 +8,10 @@ app.config['SERVER_NAME'] = 'localhost:1111'
 from persons import persons
 from base import base
 from export import export
-from monitoring import monitoring
+from monitoring import monitoring 
 from team import team
 
-app.register_blueprint(persons, url_prefix='/')
+app.register_blueprint(persons, url_prefix='/') 
 app.register_blueprint(base, url_prefix='/')
 app.register_blueprint(export, url_prefix='/')
 app.register_blueprint(monitoring, url_prefix='/monitoring')
@@ -24,4 +24,4 @@ def home():
 
 if __name__ == '__main__':
     print(static.pc_ip)
-    app.run(debug=False)
+    app.run(debug=True)

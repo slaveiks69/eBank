@@ -58,9 +58,9 @@ def edit_person():
     person = edit_person_bd(
         arg['id'],
         arg['passport_serial'], 
-        arg['last_name'],
-        arg['first_name'], 
-        arg['patronymic'], 
+        capitalize_tajics(arg['last_name']), 
+        capitalize_tajics(arg['first_name']), 
+        capitalize_tajics(arg['patronymic']), 
         arg['birth_date'], 
         arg['birth_place'], 
         arg['passport_issue'], 
@@ -72,7 +72,7 @@ def edit_person():
         arg['codeword']
     )
 
-    count_add()
+    #count_add()
 
     return { 'reload': 'edit', 'person': person }
 
@@ -90,4 +90,31 @@ def add_get_kod(kod):
         if "АС" in kod:
             vb = True
         return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod, vb=vb)
+    
+@persons.post('/delete')
+def delete():
+    rqt = json.loads(request.data)
+
+    id = (f"{rqt['id']}").strip()
+    print(id)
+    
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+
+            cursor = sex.cursor()
+
+            cursor.execute(f"SELECT * FROM person WHERE id = {id}")
+
+            row = cursor.fetchone()
+
+            cursor.execute(f"DELETE FROM person WHERE id = {id}")
+            cursor.execute(f"DELETE FROM person_card WHERE passport_serial = '{row[1]}'")
+            cursor.execute(f"DELETE FROM person_team WHERE passport_serial = '{row[1]}'")
+            cursor.execute(f"DELETE FROM person_team_metadata WHERE passport_serial = '{row[1]}'")
+      
+            sex.commit()
+
+    return "1"
     

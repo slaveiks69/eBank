@@ -13,6 +13,15 @@ const postData = async (url = '', data = {}) => {
   return response.json();
 };
 
+document.body.addEventListener("keyup", (event) => {
+  switch (event.keyCode) {
+    case 82: //r
+      if(!document.querySelector('.window_db').classList.contains("popup-close"))
+        w2ui['grid'].reload();
+      break;
+  }
+});
+
 $(".btn-add").click(function () {
   $(".popup").removeClass("popup-close");
   document.querySelector('.popup').src = "add/";
@@ -80,9 +89,7 @@ $(".btn-team").click(function () {
 });
 
 $(".db_refresh").click(function () {
-  w2ui['grid'].reload().then(() => {
-    window.update();
-  });
+  w2ui['grid'].reload().then(() => {});
 });
 
 $(".input_clear").click(function () {
