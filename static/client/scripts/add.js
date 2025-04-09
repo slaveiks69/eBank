@@ -1,17 +1,3 @@
-const postData = async (url = '', data = {}) => {
-  // Формируем запрос
-  const response = await fetch(url, {
-    // Метод, если не указывать, будет использоваться GET
-    method: 'POST',
-    // Заголовок запроса
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    // Данные
-    body: JSON.stringify(data)
-  });
-  return response.json();
-};
 
 function change_pass_placeholder(pass) {
   $("#passport").attr("placeholder", pass);
@@ -61,7 +47,34 @@ function VB() {
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(10)").classList.add("popup-close");
   document.querySelector(".passport").classList.remove("on");
   document.querySelector(".passport > li > i").innerHTML = "Военник";
+
+  document.querySelector("#date").classList.remove("off");
+  document.querySelector(".accept-button").disabled = false;
 }
+
+function getRandomInt(min,max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+let region = [ 
+  "993", "917", "987", "999", "928",
+  "925", "966", "916", "903", "989", 
+  "985", "987", "927", "977", "988", 
+  "929", "915", "930", "918", "936",
+  "922", "960", "905", "968", "986",
+  "901", "920", "967", "981"
+]
+
+$(".btn-dice").click(
+  function (){
+    let rg1 = region[Math.floor(Math.random()*region.length)];
+    let part2 = ""+getRandomInt(0,9)+""+getRandomInt(0,9)+""+getRandomInt(0,9);
+    let nomer = "+7("+rg1+")"+part2+"-"+getRandomInt(0,9)+""+getRandomInt(0,9)+"-"+getRandomInt(0,9)+""+getRandomInt(0,9);
+    $("#nomer").val(nomer);
+  }
+);
 
 function PASSPORT() {
   change_val("", "", "", "", "", "", "", "", "");
@@ -84,6 +97,9 @@ function PASSPORT() {
   document.querySelector("body > div:nth-child(2) > div > div > div:nth-child(10)").classList.remove("popup-close");
   document.querySelector(".passport").classList.add("on");
   document.querySelector(".passport > li > i").innerHTML = "Паспорт";
+
+  document.querySelector("#date").classList.remove("off");
+  document.querySelector(".accept-button").disabled = false;
 }
 
 function buttonChange(otkuda) {
@@ -96,10 +112,11 @@ function buttonChange(otkuda) {
       btn.attr("value", "Записать");
       break;
   }
+  checkDate();
 }
 
 function passport_mask() {
-  return postData('http://localhost:1111/find', { kod: $("#passport").val() })
+  return postData('find', { kod: $("#passport").val() })
     .then((data) => {
       window.found = null;
 
@@ -112,6 +129,8 @@ function passport_mask() {
       document.querySelector('#passport').classList.remove('nj-top');
 
       window.found = data;
+
+      //login_place
 
       switch (data.s) {
         case 'ipriziv':
@@ -147,7 +166,7 @@ function passport_mask() {
             data.found.address.toUpperCase(),
           );
 
-
+          document.querySelector('.login_place').innerHTML = data.found.who;
 
           console.log(data);
           break;
@@ -181,6 +200,8 @@ function confirm() {
           p.address.toUpperCase(),
         );
 
+        checkDate();
+
         break;
       case 'bank':
         date = new Date(Date.parse(p.birthDate));
@@ -199,6 +220,8 @@ function confirm() {
         );
 
         $("#nomer").val('+7(' + p.phoneHome.slice(0, 3) + ')' + p.phoneHome.slice(3, 6) + '-' + p.phoneHome.slice(6, 8) + '-' + p.phoneHome.slice(8, 10));
+
+        checkDate();
 
         break;
     }
@@ -291,19 +314,24 @@ $(function () {
   }
   $("#dater").mask("99.99.9999", {
     completed: function () {
-      let date = convertToDate($("#date").val());
-      let dater = convertToDate($("#dater").val());
-
-      let now = new Date(Date.now());
-
-      if ((now > dater.addYears(20).addDays(90)) && (date <= dater.addYears(20))) {
-        document.querySelector("#date").classList.add("off");
-      }
-      else {
-        document.querySelector("#date").classList.remove("off");
-      }
+      checkDate();
     }
   });
+  window.checkDate = function checkDate2() {
+    let date = convertToDate($("#date").val());
+    let dater = convertToDate($("#dater").val());
+
+    let now = new Date(Date.now());
+
+    if ((now > dater.addYears(20).addDays(90)) && (date <= dater.addYears(20))) {
+      document.querySelector("#date").classList.add("off");
+      document.querySelector(".accept-button").disabled = true;
+    }
+    else {
+      document.querySelector("#date").classList.remove("off");
+      document.querySelector(".accept-button").disabled = false;
+    }
+  };
   $("#nomer").mask("+7(999)999-99-99");
   $("#f").on("input", function () {
     $("#slovo").val($(this).val());
@@ -323,7 +351,7 @@ $(function () {
   $(".accept-button").click(function () {
     if (window.found != null)
       if (window.found.s == 'bank') {
-        postData('http://localhost:1111/edit-person', {
+        postData('edit-person', {
           id: window.found.found.id,
           passport_serial: $("#passport").val(),
           last_name: $("#f").val(),
@@ -337,7 +365,8 @@ $(function () {
           address: $("#address").val().toUpperCase(),
           phone_home: $("#nomer").val(),
           recruitment_office_id: 1,
-          codeword: $("#slovo").val()
+          codeword: $("#slovo").val(),
+          login: window.user_login
         })
           .then((data) => {
             if (data.reload == "edit") {
@@ -357,7 +386,7 @@ $(function () {
         return;
       }
 
-    postData('http://localhost:1111/add-person', {
+    postData('add-person', {
       passport_serial: $("#passport").val(),
       last_name: $("#f").val(),
       first_name: $("#i").val(),
@@ -370,7 +399,8 @@ $(function () {
       address: $("#address").val().toUpperCase(),
       phone_home: $("#nomer").val(),
       recruitment_office_id: 1,
-      codeword: $("#slovo").val()
+      codeword: $("#slovo").val(),
+      login: window.user_login
     })
       .then((data) => {
         if (data.reload == "add") {

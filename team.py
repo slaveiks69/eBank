@@ -17,7 +17,7 @@ def create_team():
     if static.baseCheck == True:
         sex = connect()
         cursor = sex.cursor()
-        print(sql)
+        #print(sql)
         cursor.execute(sql)
         sex.commit()
 
@@ -26,9 +26,11 @@ def create_team():
         try:
             for person in rqt['data']['persons']:
                 sql = begin_sql + f"('{person['passport']}', {rqt['data']['outgoingId']})"
+                
                 cursor.execute(sql)
                 sex.commit()
-        except pymssql.Error:
+        except pymssql.DatabaseError:
+            print("\n\nsex\n\n")
             sex.close()
             return '2'
         
@@ -59,10 +61,16 @@ def proclick():
     rqt = json.loads(request.data)
 
     passportSerial = rqt['data']
+    checker = rqt['checker']
 
     outgoing = "0000"
 
-    sql = f"IF NOT EXISTS(SELECT * FROM person_team_metadata WHERE passport_serial='{passportSerial}') INSERT INTO person_team_metadata(passport_serial, account_number_registered_in_military_id) VALUES('{passportSerial}', 1) ELSE UPDATE person_team_metadata SET account_number_registered_in_military_id=(SELECT ~account_number_registered_in_military_id FROM person_team_metadata WHERE passport_serial='{passportSerial}') WHERE passport_serial='{passportSerial}'"
+    sql2 = f"(SELECT ~account_number_registered_in_military_id FROM person_team_metadata WHERE passport_serial='{passportSerial}')"
+    print(f"\n\n\n{checker}\n\n\n")
+    if checker is True:
+        sql2 = "1"
+
+    sql = f"IF NOT EXISTS(SELECT * FROM person_team_metadata WHERE passport_serial='{passportSerial}') INSERT INTO person_team_metadata(passport_serial, account_number_registered_in_military_id) VALUES('{passportSerial}', 1) ELSE UPDATE person_team_metadata SET account_number_registered_in_military_id={sql2} WHERE passport_serial='{passportSerial}'"
 
     static.baseCheck = check_local_database()
 
@@ -91,6 +99,16 @@ def check():
     print(rqt)
     
     ishodKodTeam = rqt['data']
+
+    persons = check_get_persons(ishodKodTeam)
+
+    return { "persons": persons, "search": search(ishodKodTeam) }
+
+@team.post('/check-persons')
+def check_get_persons(ishodKodTeam = 0):
+    if ishodKodTeam == 0:
+        rqt = json.loads(request.data)
+        ishodKodTeam = rqt['data']
 
     static.baseCheck = check_local_database()
 
@@ -132,18 +150,22 @@ def check():
 
             if row[22] != None:
                 if row[22] == 1:
-                    dungeonmaster['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_registred']}" }
+                    dungeonmaster['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_registred']}; color: #ffffff3d !important;" }
             
             i = i + 1
             persons.append(dungeonmaster)
-
+    
         return persons
 
 @team.get('/')
 def monitoring_home():
-  
-
-    return render_template('team.html')
+    black_uri_create = [
+        f"http://{static.cfg['black']['host']}/api/recruits?skip=0&take=100&requireTotalCount=true&sort=%5B%7B%22selector%22%3A%22lastName%22%2C%22desc%22%3Afalse%7D%5D&filter=%5B%5B%22lastName%22%2C%22contains%22%2C%22",
+        "%22%5D%2C%22and%22%2C%5B%22firstName%22%2C%22contains%22%2C%22",
+        "%22%5D%2C%22and%22%2C%5B%22middleName%22%2C%22contains%22%2C%22",
+        "%22%5D%5D&totalSummary=%5B%7B%22selector%22%3A%22lastName%22%2C%22summaryType%22%3A%22count%22%7D%5D&_=1730914758145"
+    ]
+    return render_template('team.html', uri=static.uri, uri_black=black_uri_create)
 
 @team.get('/outgoing')
 def outgoing():
@@ -154,8 +176,11 @@ def outgoing():
     return "{ "+f"\"records\": {teams}, \"total\": {total_count_team()} "+" }"
 
 @team.post('/search')
-def search():
-    rqt = json.loads(request.data)
+def search(ish = None):
+    if not ish is None:
+        rqt = {"data":{"ishn":f"{ish}"}}
+    else:
+        rqt = json.loads(request.data)
 
     print(rqt)
 
@@ -209,14 +234,20 @@ def search():
             #person['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_none']}" }
             person['w2ui'] = { 'style': "" }
             findfio = find_in_bank_fio(person['lastName'],person['firstName'],person['middleName'])
+            
+            #print(f"\n\n{person['lastName']} {findfio}\n\n")
             if findfio != None:
                 findfio['birthDate'] = findfio['birthDateFormated']
                 findfio['recid'] = f'{i}1'
                 person['w2ui']['children'] = [findfio]
                 person['w2ui']['class'] = "red"
+            else:
+                person['w2ui']['class'] = "redfucking"
         else:
+            style = {}
+            #if find['card'] != "":
+            #    style['passportSerial'] = f"background-color: {static.cfg['bank']['color_registred']};"
             if find['lastName'] != person['lastName'] or find['firstName'] != person['firstName'] or find['patronymic'] != person['middleName']:
-                style = {}
                 find['birthDate'] = find['birthDateFormated']
                 color = static.cfg['bank']['color_none']
                 if find['lastName'] != person['lastName']:
@@ -269,10 +300,10 @@ def get_teams(limit,offset):
             if row[1] >= static.cfg['bank']['inside']:
                 team['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_inside']}" }
             elif row[4] == a[0]:
-                team['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_registred']}" }
+                team['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_registred']}; color: #ffffff3d !important;" }
             elif a[0] != 0:
                 team['counter'] = f"{a[0]}/{row[4]}"
-                team['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_inteam']}" }
+                team['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_inteam']}; text-decoration: underline;" }
 
             teams.append(team)
 

@@ -9,6 +9,11 @@
     --mugen: #788ccb;
 }
 
+.cardebani
+{
+    background-color: var(--mugen) !important;
+}
+
 .button
 {
     font-family: "dsk";
@@ -88,6 +93,16 @@ html
     
 }
 
+.connect
+{
+    color: var(--hblue)
+}
+
+.disconnect
+{
+    color: var(--hred)
+}
+
 .popup
 {
     display: block;
@@ -109,7 +124,7 @@ html
 
 .transparent
 {
-    color: rgba(255, 255, 255, 0.3) !important;
+    color: rgb(120 140 203) !important;
 }
 
 .logo-picture
@@ -154,8 +169,7 @@ a
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-top: 5%;
-    margin-bottom: 5%;
+    height: 10%;
 }
 
 .fm
@@ -166,9 +180,14 @@ a
 .menu
 {
     padding: 0px !important;
-    height: -webkit-fill-available;
+    height: 80%;
     display: flex;
     flex-direction: column;
+}
+
+.menu_back 
+{
+    height: 10%;
 }
 
 .menu-item
@@ -227,7 +246,7 @@ a
     background-size: cover;
 }
 
-input[type="text" i] 
+input[type="text" i], input[type="password" i]
 {
     border-style: solid;
     background-color: #000;
@@ -238,6 +257,12 @@ input[type="text" i]
     font-size: 0.8em;
     border-radius: 10px;
     width: -webkit-fill-available;
+}
+
+.btn-login {
+    margin-left: 15%;
+    margin-right: 15%;
+    margin-top: 1.2em;
 }
 
 .input-with-top-text
@@ -328,6 +353,19 @@ input::placeholder
     margin-left: 1.5em;
     position: absolute;
     background-color: #000;
+}
+
+.login_menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #000;
+}
+
+.login_logo {
+    margin-top: 0px !important;
+    margin-bottom: 1em !important;
 }
 
 .toolbar {

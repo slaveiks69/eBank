@@ -1,15 +1,5 @@
-const getData = async (url = '') => {
-    const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    });
-    return response.json();
-};
-
 $(".btn-reset").click(function () {
-    getData('http://localhost:1111/monitoring/reset')
+    getData('monitoring/reset')
         .then((data) => {
             if (data.complete == "true") {
                 alert("Очищенно");
@@ -18,9 +8,16 @@ $(".btn-reset").click(function () {
 });
 
 $(".btn-update").click(function () {
-    getData('http://localhost:1111/monitoring/count')
+    getData('monitoring/count')
         .then((data) => {
             update(data);
+        });
+});
+
+$(".btn-export-global").click(function () {
+    getData('gex/export')
+        .then((data) => {
+            console.log(data+"dictt");
         });
 });
 
@@ -44,7 +41,7 @@ function update(data) {
 
     dataset.forEach(element => {
         var count = element.count;
-        var names = element.pc_name + ' | ' + element.pc_ip
+        var names = element.login
         data1.push({ 'value': count, name: names });
     });
 
@@ -66,7 +63,7 @@ function update(data) {
                 a = "🔥💪";
                 break;
         }
-        i.innerHTML = (index + 1) + " | " + e.pc_name + " | " + e.pc_ip + " | <h3 style=\"display: contents;\">" + e.count + "</h3>шт. " + a;
+        i.innerHTML = (index + 1) + " | " + e.login + " | <h3 style=\"display: contents;\">" + e.count + "</h3>шт. " + a;
         let b = "";
         switch (index) {
             case 0:
@@ -92,7 +89,7 @@ function update(data) {
 }
 
 $(document).ready(function () {
-    getData('http://localhost:1111/monitoring/count')
+    getData('monitoring/count')
         .then((data) => {
             update(data);
         });

@@ -1,0 +1,65 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>eBank | Авторизация</title>
+
+    <script src="{{url_for('static', filename='/client/scripts/jquery.js')}}"></script>
+    <script src="{{url_for('static', filename='/client/scripts/jquery.maskedinput.js')}}"></script>
+    <script src="{{url_for('static', filename='/client/scripts/jquery-ui.js')}}"></script>
+    <link href="{{url_for('static', filename='/client/css/main.css')}}" rel="stylesheet" />
+    <!-- <link href="{{url_for('static', filename='/client/css/add.css')}}" rel="stylesheet" /> -->
+    <link href="{{url_for('static', filename='/client/css/fa.css')}}" rel="stylesheet" />
+    <link rel="icon" type="image/x-icon" href="{{url_for('static', filename='/images/favicon.ico')}}">
+
+    <link href="{{url_for('static', filename='/client/css/scrollbar.css')}}" rel="stylesheet" />
+
+    <script src="{{url_for('static', filename='/client/scripts/w2ui.js')}}"></script>
+    <link href="{{url_for('static', filename='/client/css/w2ui.css')}}" rel="stylesheet" />
+    <link href="{{url_for('static', filename='/client/css/w2ui-my.css')}}" rel="stylesheet" />
+   
+
+    <style>
+        @font-face {
+            font-family: "dsk";
+            src: local("dsk"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Regular.ttf')}}") format("truetype"),
+            url("{{url_for('static', filename='/client/fonts/Disket-Mono-Bold.ttf')}}") format("truetype");
+        }
+
+        @font-face {
+            font-family: "Font Awesome 6 Pro";
+            src: local("Font Awesome 6 Pro"),
+            url("{{url_for('static', filename='/client/fonts/fa-solid-900.woff2')}}") format("woff2");
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="window login_menu">
+        <div class="logo gap login_logo">
+            <img class="logo-picture" src="{{url_for('static', filename='/images/e-logo.png')}}" />
+            <i class="fm fa-solid">bank</i>
+        </div>
+        <form>
+            <div class="input-with-top-text">
+                <i class="top-text">LOGIN</i>
+                <input id="login" type="text" />
+            </div>
+            <div class="input-with-top-text">
+                <i class="top-text">PASSWORD</i>
+                <input id="password" type="password" />
+            </div>
+            <input class="btn-login button" type="button" value="Войти" />
+        </form>
+    </div>
+   
+</body>
+<script src="{{url_for('static', filename='/client/scripts/utils.js')}}"></script>
+<script src="{{url_for('static', filename='/client/scripts/login.js')}}"></script>
+<script>
+    window.uri = '{{ uri }}';
+</script>
+</html>

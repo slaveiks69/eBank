@@ -33,16 +33,52 @@
 </head>
 
 <body style="background-color: #000 !important;">
-  <div style="width: fit-content; gap: 10px;">
-    <div class="statistic_count">
-      <div id="container"></div>
-      <i class="stat_child">Царь горы за день по вбитию:</i>
+  <div>
+    <div style="padding: 15px 0px;">Дневная статистика</div>
+    
+    <div style="width: fit-content; gap: 10px;">
+      <div class="statistic_count">
+        <div id="container"></div>
+        <i class="stat_child">Царь горы за день по вбитию:</i>
+      </div>
+
+      <input class="button btn-update" type="button" value="Обновить" />
+      <input class="button btn-reset" disabled type="button" value="Сбросить статистику" />
     </div>
 
-    <input class="button btn-update" type="button" value="Обновить" />
-    <input class="button btn-reset" disabled type="button" value="Сбросить статистику" />
+    <div style="padding: 15px 0px; align-items: center; display: flex; gap: 15px;">Общяя выгрузка<li class="fa-solid fa-file-export btn-export-global"></li></div>
+
+    <div class="base" style="position: fixed; width: -webkit-fill-available;height: 40%;"></div>
+
   </div>
 </body>
+<script>
+  window.uri = '{{ uri }}';
+</script>
+<script src="{{url_for('static', filename='/client/scripts/w2ui.js')}}"></script>
+<link href="{{url_for('static', filename='/client/css/w2ui.css')}}" rel="stylesheet" />
+<link href="{{url_for('static', filename='/client/css/w2ui-my.css')}}" rel="stylesheet" />
+<script>
+  let dict = new w2grid({
+            name: 'dict_grid',
+            box: '.base',
+            url: '/gex/dict',
+            show: {
+                lineNumbers: true
+            },
+            fixedBody: true,
+            autoLoad: true,
+            columns: [
+                { field: 'login', text: 'Логин', size: '80px' },
+                { field: 'id', text: 'Ид', size: '70px' },
+                { field: 'passportSerial', text: 'НСпВ', size: '100px' },
+                { field: 'lastName', text: 'Фамилия', size: '100px' },
+                { field: 'firstName', text: 'Имя', size: '80px' },
+                { field: 'patronymic', text: 'Отчество', size: '120px' },
+                { field: 'birthDate', text: 'День рождения', size: '100px' }
+            ]
+        });
+</script>
+<script src="{{url_for('static', filename='/client/scripts/utils.js')}}"></script>
 <script src="{{url_for('static', filename='/client/scripts/monitoring/main.js')}}"></script>
-
 </html>

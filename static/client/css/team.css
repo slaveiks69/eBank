@@ -25,9 +25,30 @@ body {
 }
 
 .red {
-    background-color: #db4b4b !important;
+    background-color: #ebe33e !important;
+    color: #000 !important;
+}
+
+.redfucking {
+    background-color: #df3636 !important;
 }
 
 .offe {
     display: none;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records .w2ui-load-more, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords .w2ui-load-more {
+    background-color: transparent !important;
+    border-right: none !important;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records .w2ui-load-more > div, .w2ui-grid .w2ui-grid-body .w2ui-grid-frecords .w2ui-load-more > div {
+    color: white !important;
+    background-color: transparent !important;
+    border-top: none !important;
+    border-bottom: none !important;
+}
+
+.w2ui-grid .w2ui-grid-body .w2ui-grid-records .w2ui-load-more > div:hover {
+    background-color: var(--mugen) !important;
 }

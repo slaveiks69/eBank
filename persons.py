@@ -1,4 +1,6 @@
 from flask import Blueprint, json, render_template, request, redirect, url_for
+from flask_login import current_user
+
 from utils import *
 
 persons = Blueprint('persons', __name__)
@@ -27,9 +29,14 @@ def capitalize_tajics(str):
 
     return x.strip()
 
+#from global_export import gea
+
 @persons.post('/add-person')
 def add_person():
     arg = json.loads(request.data)
+
+    if current_user.root == 0:
+        return ''
 
     person = add_person_bd(
         arg['passport_serial'], 
@@ -47,13 +54,29 @@ def add_person():
         arg['codeword']
     )
 
-    count_add()
+    count_add(arg['login'])
+    log(person['id'],arg['login'])
+
+    gea.passport.add(person['id'],arg['login'])
 
     return { 'reload': 'add', 'person': person }
+
+def log(id,login):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+            sql = f"INSERT INTO person_log(id,login) VALUES('{id}','{login}');"
+            cursor = sex.cursor()
+            cursor.execute(sql)
+            sex.commit()
 
 @persons.post('/edit-person')
 def edit_person():
     arg = json.loads(request.data)
+
+    if current_user.root == 0:
+        return ''
 
     person = edit_person_bd(
         arg['id'],
@@ -73,6 +96,8 @@ def edit_person():
     )
 
     #count_add()
+    gea.passport.add(arg['id'],arg['login'])
+    gea.get_all()
 
     return { 'reload': 'edit', 'person': person }
 
@@ -81,7 +106,7 @@ total = static.get_total_count()
 @persons.get('/add/')
 def add_get():
     if request.method == 'GET':
-        return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck )
+        return render_template('add.html', login_place=False, uri=static.uri, user=current_user,db_check=check_local_database(), totalCount=total, check=static.loginCheck )
     
 @persons.get('/add/<kod>')
 def add_get_kod(kod):
@@ -89,7 +114,7 @@ def add_get_kod(kod):
         vb = False
         if "АС" in kod:
             vb = True
-        return render_template('add.html', db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod, vb=vb)
+        return render_template('add.html', login_place=True, uri=static.uri, user=current_user,db_check=check_local_database(), totalCount=total, check=static.loginCheck, edit_kod=kod, vb=vb)
     
 @persons.post('/delete')
 def delete():
@@ -109,6 +134,7 @@ def delete():
 
             row = cursor.fetchone()
 
+            cursor.execute(f"DELETE FROM person_log WHERE id = {id}")
             cursor.execute(f"DELETE FROM person WHERE id = {id}")
             cursor.execute(f"DELETE FROM person_card WHERE passport_serial = '{row[1]}'")
             cursor.execute(f"DELETE FROM person_team WHERE passport_serial = '{row[1]}'")

@@ -6,16 +6,15 @@ monitoring = Blueprint('monitoring', __name__)
 
 @monitoring.get('/')
 def monitoring_home():
-  
 
-    return render_template('monitoring.html')
+    return render_template('monitoring.html', uri=static.uri)
 
 @monitoring.get('/count')
 def get_count():
     sex = connect("Day_Statistic")
 
     cursor = sex.cursor()
-    cursor.execute("select MAX(name_pc) as 'name_pc', MAX(ip) as 'ip', SUM(count) as 'count' from count_add_edit group by name_pc order by SUM(count) desc")
+    cursor.execute("select MAX(login) as 'login', SUM(count) as 'count' from user_statistic group by login order by SUM(count) desc")
 
     pc = []
 
@@ -24,9 +23,8 @@ def get_count():
             break
 
         pc_json = {
-            'pc_name': row[0],
-            'pc_ip': row[1],
-            'count': row[2]
+            'login': row[0],
+            'count': row[1]
         }
 
         pc.append(pc_json)
@@ -41,7 +39,7 @@ def reset_stat():
     sex = connect("Day_Statistic")
 
     cursor = sex.cursor()
-    cursor.execute("delete from count_add_edit")
+    cursor.execute("delete from user_statistic")
 
     sex.commit()
 

@@ -10,3 +10,8 @@
     flex-direction: column;
     gap:3px;
 }
+
+.btn-export-global:hover{
+    cursor: pointer;
+    text-decoration-line: underline;
+}

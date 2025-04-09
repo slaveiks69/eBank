@@ -44,7 +44,7 @@
         </div>
         
         <div class="hwfa wwfa">
-            <div class="flex gap" >
+            <div class="flex gap" style="padding: 6px;" >
                 <input id="ishn" type="text" placeholder="Исходящий номер" />
                 <input id="create_team" style="margin-top: 0px !important; max-width: 180px;" class="button" type="button" value="Создать команду" />
                 <div id="team_info" style="font-size: 0.6em; font-weight: 600; margin-top: auto; margin-bottom: auto;"></div>
@@ -54,6 +54,10 @@
         </div>
     </div>
 </body>
+<script>
+    window.black = ['{{ uri_black[0] }}','{{ uri_black[1] }}','{{ uri_black[2] }}','{{ uri_black[3] }}'];
+    window.uri = '{{ uri }}';
+</script>
+<script src="{{url_for('static', filename='/client/scripts/utils.js')}}"></script>
 <script src="{{url_for('static', filename='/client/scripts/team/main.js')}}"></script>
-
 </html>

@@ -1,17 +1,3 @@
-const postData = async (url = '', data = {}) => {
-    // Формируем запрос
-    const response = await fetch(url, {
-        // Метод, если не указывать, будет использоваться GET
-        method: 'POST',
-        // Заголовок запроса
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        // Данные
-        body: JSON.stringify(data)
-    });
-    return response.json();
-};
 
 let grid = new w2grid({
     name: 'outgoing_grid',
@@ -22,8 +8,8 @@ let grid = new w2grid({
         lineNumbers: true
     },
     fixedBody: true,
-    autoLoad: true,
-    limit: 25,
+    autoLoad: false,
+    limit: 20,
     columns: [
         { field: 'outgoing', text: 'Исходный номер команды', size: '40px' },
         { field: 'team', text: 'Номер команды', size: '40px' },
@@ -32,13 +18,22 @@ let grid = new w2grid({
         { field: 'counter', text: 'Кол-во духов', size: '65px', }
     ],
     contextMenu: [
-        //{ id: 'view', text: "Просмотр", icon: "fa fa-info" },
+        { id: 'proclick', text: "Закрыть команду", icon: "fa fa-mouse" },
         { id: 'reload', text: "Обновить", icon: "fa fa-refresh" },
         { id: 'delete', text: "Удалить", icon: "fa fa-trash" }
     ],
     onContextMenuClick(event) {
         //console.log(event);
         switch (event.detail.menuItem.id) {
+            case "proclick":
+                postData('team/check', { data: grid.get(event.detail.recid).outgoing + '' })
+                    .then((data) => {
+                        data.persons.forEach((x) => proclick(x.passportSerial, false, true), false);
+                        grid.selectNone();
+                        grid.reload();
+                    });
+                //proclick(outeam.get(event.detail.recid).passportSerial);
+                break;
             case "reload":
                 this.selectNone();
                 this.reload();
@@ -48,7 +43,7 @@ let grid = new w2grid({
                 break;
         }
     },
-    onDblClick(event){
+    onDblClick(event) {
         open(grid.get(event.detail.recid).outgoing);
     }
 });
@@ -58,14 +53,14 @@ function delete_popup(outgoing) {
         title: 'Удаление',
         body: '<i>Чтобы удалить </i><i style="font-weight: 600; color: var(--hred) !important;font-size: 1.3em;"> Команду №' + outgoing +
             '</i><i>введите \"подтвердить\"</i><input id="check_input" placeholder="ПОДТВЕРДИТЬ" class="ab" type="text"  />' +
-            '<input type="button" class="button check_btn" onclick="check('+outgoing+')" style="font-size: 1.1em !important; width: 30%; border-color: var(--hred) !important;" value="Проверить" />',
+            '<input type="button" class="button check_btn" onclick="check(' + outgoing + ')" style="font-size: 1.1em !important; width: 30%; border-color: var(--hred) !important;" value="Проверить" />',
     });
-    
+
 }
 
 window.check = function check(outgoing) {
     if ($("#check_input").val().toUpperCase() === "ПОДТВЕРДИТЬ") {
-        postData('http://localhost:1111/team/delete', { data: outgoing })
+        postData('team/delete', { data: outgoing })
             .then((data) => {
                 console.log(data);
                 grid.selectNone();
@@ -76,19 +71,19 @@ window.check = function check(outgoing) {
     }
 }
 
-function open(outgoing)
-{
-    postData('http://localhost:1111/team/check', { data: outgoing+'' })
+function open(outgoing) {
+    postData('team/check', { data: outgoing + '' })
         .then((data) => {
+            window.outgoing = outgoing;
             w2popup.open({
-                title: 'Команда №'+outgoing,
-                body: '<div id="outeam"><div>',
-                width: 650, 
+                title: 'Исходный №' + outgoing,
+                body: '<div style="font-weight: 700;font-size: 1.175em;"><li class="fa-solid fa-users"></li> No.'+data.search.internalTeamId+' <li class="fa-solid fa-user"></li> '+data.search.count+' <li class="fa-solid fa-calendar"></li> '+data.search.outDate+'</div><div id="outeam"><div>',
+                width: 650,
                 height: 550,
                 showMax: true,
             });
-            if(top.document.querySelector('.team').contentWindow.w2ui.hasOwnProperty('out_team_grid'))
-                top.document.querySelector('.team').contentWindow.w2ui['out_team_grid'].destroy(); 
+            if (top.document.querySelector('.team').contentWindow.w2ui.hasOwnProperty('out_team_grid'))
+                top.document.querySelector('.team').contentWindow.w2ui['out_team_grid'].destroy();
             let outeam = new w2grid({
                 name: 'out_team_grid',
                 box: '#outeam',
@@ -99,24 +94,28 @@ function open(outgoing)
                 autoLoad: false,
                 columns: [
                     { field: 'last_name', text: 'Фамилия', size: '100px' },
-                    { field: 'first_name', text: 'Имя', size: '80px'},
+                    { field: 'first_name', text: 'Имя', size: '80px' },
                     { field: 'patronymic', text: 'Отчество', size: '120px' },
                     { field: 'birth_date', text: 'День рождения', size: '100px' },
-                    { field: 'accountNumber', text: 'Карта', size: '170px', 
+                    {
+                        field: 'accountNumber', text: 'Карта', size: '170px',
                         render: function (record, extra) {
                             if (record.accountNumber == null) return '';
-                            let card = record.accountNumber.split(/(.{4})/).filter(a=>!!a);
+                            let card = record.accountNumber.split(/(.{4})/).filter(a => !!a);
                             var html = '<div>' + card.join(' ') + '</div>';
                             return html;
-                        } 
+                        }
                     }
                 ],
                 contextMenu: [
                     { id: 'open', text: "Править", icon: "fa fa-pencil", class: "offe" },
                     { id: 'reload', text: "Обновить", icon: "fa fa-refresh" }
                 ],
-                onDblClick(event){
-                    proclick(outeam.get(event.detail.recid).passportSerial);
+                onClose(event) {
+                    window.outgoing = undefined;
+                },
+                onDblClick(event) {
+                    proclick(outeam.get(event.detail.recid).passportSerial, true);
                 },
                 onContextMenu(event) {
                     event.done(function () {
@@ -132,7 +131,7 @@ function open(outgoing)
                                 contextMenu1Item.classList.add('offe');
                         }
                     });
-            
+
                 },
                 onContextMenuClick(event) {
                     //console.log(event);
@@ -147,6 +146,7 @@ function open(outgoing)
                                     top.document.querySelector('.popup').src = "add/" + passport;
                                     top.document.getElementById('export').classList.remove("popup-close");
                                 }
+
                             }
                             break;
                         case "reload":
@@ -155,7 +155,7 @@ function open(outgoing)
                     }
                 }
             });
-            w2ui['out_team_grid'].add(data);
+            w2ui['out_team_grid'].add(data.persons);
         });
 
 }
@@ -190,14 +190,27 @@ function getPersonF(person) {
     return newperson;
 }
 
-function proclick(passportSerial) {
-    postData('http://localhost:1111/team/proclick', { data: passportSerial })
+function proclick(passportSerial, reload, checker = false) {
+    console.log(checker+" t");
+    postData('team/proclick', { data: passportSerial, checker: checker })
         .then((data) => {
-            w2popup.close();
-            console.log(data+" proclick");
+
+            if (window.outgoing == undefined) return;
+            if (!reload)
+                return;
+
+            w2ui['out_team_grid'].clear();
+            postData('team/check-persons', { data: window.outgoing + '' })
+                .then((data) => {
+                    //console.log(data);
+                    w2ui['out_team_grid'].add(data);
+                });
+
+            //w2popup.close();
+            console.log(data + " proclick");
             grid.selectNone();
             grid.reload();
-            open(data);
+            //open(data);
         });
 }
 
@@ -236,7 +249,7 @@ window.update = function update_inputs() {
         return;
     }
 
-    postData('http://localhost:1111/team/search', { data: input })
+    postData('team/search', { data: input })
         .then((data) => {
             if (data.outgoingId == '-1') {
                 w2utils.notify('Данной команды не существует!', { timeout: 2000, error: true });
@@ -246,27 +259,24 @@ window.update = function update_inputs() {
             w2ui['team_grid'].add(data.persons);
 
             let records = tgrid.records;
-            for (let e of records)
-            {
-                if(e.passport.includes('АС'))
+            for (let e of records) {
+                if (e.passport.includes('АС'))
                     e.w2ui.children.passport.trimEnd();
-                else if (e.hasOwnProperty('w2ui'))
-                {
-                    if (e.w2ui.hasOwnProperty('children'))
-                    {
-                        if(e.w2ui.children[0].passport.includes('АС'))
-                            e.w2ui.children[0].passport = e.w2ui.children[0].passport.trimEnd(); 
+                else if (e.hasOwnProperty('w2ui')) {
+                    if (e.w2ui.hasOwnProperty('children')) {
+                        if (e.w2ui.children[0].passport.includes('АС'))
+                            e.w2ui.children[0].passport = e.w2ui.children[0].passport.trimEnd();
                     }
                 }
             }
 
             window.team = data;
-            document.querySelector('#team_info').innerHTML = "Исходящий: " + data.outgoingId 
-                + " | Команда: " + data.internalTeamId 
+            document.querySelector('#team_info').innerHTML = "Исходящий: " + data.outgoingId
+                + " | Команда: " + data.internalTeamId
                 + " | Выписка: " + data.teamId
                 + "<br> Отправка: " + data.outDate
-                + " | Состав: "+ data.count
-                +" человек";
+                + " | Состав: " + data.count
+                + " человек";
         });
 }
 
@@ -320,6 +330,13 @@ let tgrid = new w2grid({
                         top.document.getElementById('export').classList.remove("popup-close");
                     }
                 }
+                else
+                {
+                    black.forEach((e,i) => ( black[i] = e.replaceAll('amp;','') ));
+                    console.log(black[0]+tgrid.get(event.detail.recid).lastName+black[1]+tgrid.get(event.detail.recid).firstName+black[2]+tgrid.get(event.detail.recid).middleName+black[3])
+                    //window.open(black[0]+tgrid.get(event.detail.lastName)+black[1]+tgrid.get(event.detail.firstName)+black[2]+tgrid.get(event.detail.middleName)+black[3], '_blank');
+                    console.log('asos');
+                }
                 break;
             case "reload":
                 this.reload();
@@ -331,14 +348,12 @@ let tgrid = new w2grid({
 $("#create_team").click(
     function () {
         let records = tgrid.records;
-        for (let e of records)
-        {
+        for (let e of records) {
             tgrid.collapse(e.recid)
         }
         records = tgrid.records;
         let changes = tgrid.getChanges();
-        for (let change of changes)
-        {
+        for (let change of changes) {
             tgrid.get(change.recid).passport = change.passport;
         }
         records = tgrid.records;
@@ -356,9 +371,28 @@ $("#create_team").click(
             'persons': records
         }
         console.log(team);
-        postData('http://localhost:1111/team/create', { data: team })
+        postData('team/create', { data: team })
             .then((data) => {
                 console.log(data);
+                /*
+                let ipriziv = [];
+
+                records.forEach((x) => {
+                    ipriziv.push(""+x.lastName+x.firstName+x.middleName+x.birthDate);
+                });
+
+                let us = [];
+
+                data.persons.forEach((x) => {
+                    us.push(""+x.last_name+x.first_name+x.patronymic+x.birth_date)
+                });
+
+                console.log(ipriziv); console.log(us);
+
+                ipriziv.forEach((x) => {
+                    if(us.includes(!x)) console.log(x);
+                });*/
+
                 tgrid.reload();
                 grid.reload();
                 open(team.outgoingId);

@@ -50,23 +50,43 @@
             <div class="wfa">
                 <li class="fa-solid fa-database menu-item btn-db" /><i class="btn-text">База</i>
             </div>
-            <div class="wfa">
-                <li class="fa-solid fa-users menu-item btn-team" /><i class="btn-text">Команды</i>
-            </div>
-            <div class="wfa">
-                <li class="fa-solid fa-user-plus menu-item btn-add" /><i class="btn-text">Добавить</i>
-            </div>
-            <div class="wfa">
-                <li class="fa-solid fa-file-export menu-item btn-export" /><i class="btn-text">Экспорт банкам</i>
-            </div>
-            <div class="wfa">
-                <li class="fa-solid fa-area-chart menu-item btn-monitoring" /><i class="btn-text">Мониторинг</i>
-            </div>
+            {% if me.root != 0 %}
+                <div class="wfa">
+                    <li class="fa-solid fa-users menu-item btn-team" /><i class="btn-text">Команды</i>
+                </div>
+                <div class="wfa">
+                    <li class="fa-solid fa-user-plus menu-item btn-add" /><i class="btn-text">Добавить</i>
+                </div>
+                <div class="wfa">
+                    <li class="fa-solid fa-file-export menu-item btn-export" /><i class="btn-text">Экспорт банкам</i>
+                </div>
+                <div class="wfa">
+                    <li class="fa-solid fa-file-import menu-item btn-import" /><i class="btn-text">Импорт семёрок</i>
+                </div>
+                <div class="wfa">
+                    <li class="fa-solid fa-area-chart menu-item btn-monitoring" /><i class="btn-text">Мониторинг</i>
+                </div>
+            {% else %}
+                <script>
+                    $(document).ready(function() {
+                        w2ui.grid.onContextMenu = "";
+                        w2ui.grid.contextMenu = [];
+                    });
+                </script>
+            {% endif %}
             <div class="wfa">
                 <li class="fa-solid fa-at menu-item btn-at" /><i class="btn-text">Авторы</i>
             </div>
             <div class="wfa transparent">
                 <li class="fa-solid fa-code menu-nobtn" /><i style="font-size: 0.56em; font-family: 'dsk';">version {{ ver }}</i>
+            </div>
+        </div>
+        <div class="menu_back">
+            <div class="wfa">
+                <li class="fa-solid fa-user menu-item mylogin" /><i class="btn-text">{{ me.login }}</i>
+            </div>
+            <div class="wfa">
+                <li class="fa-solid fa-close menu-item btn-logout" /><i class="btn-text">Выход</i>
             </div>
         </div>
     </div>
@@ -95,14 +115,14 @@
         <div class="input-with-top-text">
             <i class="top-text">Авторы</i>
             <div class="export-window">
-                <i>Creator: <a href="https://vk.com/damn_p">Pavel Nikolskij</a> 2023-2024 II 🔥💪</i>
+                <i>Creator: <a href="https://vk.com/damn_p">Pavel Nikolskij</a> 2023 II 🔥💪</i>
             </div>
             <input tabindex="-1" class="button close-authors" type="button" value="Закрыть"/>
         </div>
 
     </div>
 
-    <div id="export" class="input-with-top-text absolute drag popup-close">
+    <div id="export" style="{% if me.root != 1 %}display: none !important;{% endif %}" class="input-with-top-text absolute drag popup-close">
         <i class="top-text">Экспорт банкам</i>
         <div id="table" class="export-window"></div>
         <input tabindex="-1" class="button clear" disabled type="button" value="Очистить"/>
@@ -111,6 +131,11 @@
 
     <iframe class="popup popup-close" loading="lazy" src="add/"></iframe>
 </body>
+<script>
+    window.uri = '{{ uri }}';
+</script>
+<script src="{{url_for('static', filename='/client/scripts/socket.io.js')}}"></script>
+<script src="{{url_for('static', filename='/client/scripts/socket.main.js')}}"></script>
+<script src="{{url_for('static', filename='/client/scripts/utils.js')}}"></script>
 <script src="{{url_for('static', filename='/client/scripts/main.js')}}"></script>
-
 </html>

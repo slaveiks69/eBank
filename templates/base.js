@@ -11,7 +11,7 @@ window.update = function update_inputs() {
         limit: 100
     }
 
-    postData('http://localhost:1111/search', { data: inputs })
+    postData('search', { data: inputs })
         .then((data) => {
             w2ui['grid'].clear();
             w2ui['grid'].add(data);
@@ -60,8 +60,10 @@ let grid = new w2grid({
         //{ field: 'name', text: 'Last Name', size: '200px' },
         { field: 'outgoing', text: 'Исх. команда', size: '50px' },
         { field: 'team', text: 'Команда', size: '50px' }
+        //{ field: 'who', text: 'Кто вбил', size: '100px' }
     ],
     contextMenu: [
+        { id: 'proclick', text: "Прокликать заранее", icon: "fa fa-mouse" },
         { id: 'copy', text: "Скопировать для фото", icon: "fa fa-camera" },
         { id: 'edit', text: "Редактировать", icon: "fa fa-pencil" },
         { id: 'delete', text: "Удалить", icon: "fa fa-trash" }
@@ -90,9 +92,26 @@ let grid = new w2grid({
                 update();
             }
     },
+    onContextMenu(event) {
+        if(w2ui['grid'].contextMenu.length == 6) {
+            w2ui['grid'].contextMenu.length = 4
+            if (grid.get(event.detail.recid).who == null)
+                return;
+        }
+
+        console.log(grid.get(event.detail.recid).who);
+
+        if(grid.get(event.detail.recid).who == null)
+            return;
+        
+        w2ui['grid'].contextMenu.push("");
+        w2ui['grid'].contextMenu.push({id: 'login', text: grid.get(event.detail.recid).who, icon: 'fa fa-user'});
+    },
     onContextMenuClick(event) {
-        //console.log(event);
         switch (event.detail.menuItem.id) {
+            case "proclick":
+                proclick(grid.get(event.detail.recid).passportSerial);
+                break;
             case "copy":
                 var p = grid.get(event.detail.recid).patronymic[0];
                 if (p === "")
@@ -113,9 +132,22 @@ let grid = new w2grid({
     }
 });
 
+function proclick(passportSerial) {
+    postData('team/proclick', { data: passportSerial })
+        .then((data) => {
+            //w2popup.close();
+            
+
+            console.log(data+" proclick");
+            grid.selectNone();
+            grid.reload();
+            //open(data);
+        });
+}
+
 window.check = function check(id) {
     if ($("#check_input").val().toUpperCase() === "ПОДТВЕРДИТЬ") {
-        postData('http://localhost:1111/delete', { 'id': id })
+        postData('delete', { 'id': id })
             .then((data) => {
                 w2utils.notify('Успешно!', { timeout: 2000, error: false });
                 w2popup.close();

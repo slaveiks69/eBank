@@ -1,18 +1,3 @@
-const postData = async (url = '', data = {}) => {
-  // Формируем запрос
-  const response = await fetch(url, {
-    // Метод, если не указывать, будет использоваться GET
-    method: 'POST',
-    // Заголовок запроса
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    // Данные
-    body: JSON.stringify(data)
-  });
-  return response.json();
-};
-
 document.body.addEventListener("keyup", (event) => {
   switch (event.keyCode) {
     case 82: //r
@@ -39,6 +24,11 @@ window.person_to_html = function person_to_html(person, index = top.document.que
   a.setAttribute("id", index);
   a.addEventListener('click', function () {
     delete_export_item(index);
+
+    postData('gex/delete', { data: person.id })
+      .then((data) => {
+        console.log(data);
+      });
   });
   i.appendChild(a);
   top.document.getElementById('table').appendChild(i);
@@ -120,6 +110,10 @@ $(".btn-monitoring").click(function () {
     window.classList.add("popup-close");
 });
 
+$(".btn-logout").click(function (){
+  window.location.href = '/logout'
+});
+
 //window.frames[2].add
 
 function get_add() {
@@ -135,7 +129,7 @@ $(document).ready(function () {
   $(".export").click(function () {
     let data1 = get_add();
 
-    postData('http://localhost:1111/export', { data: data1 })
+    postData('export', { data: data1 })
       .then((data) => {
         if (data.export == "okay") {
           clear_export();

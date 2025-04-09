@@ -1,5 +1,9 @@
+#from flask import session
+from flask_login import LoginManager
+
 import requests, urllib.parse, socket
 import datetime as siski
+from global_export import gea
 #from config import *
 import pymssql
 
@@ -8,6 +12,7 @@ import yaml
 def get_config():
     with open("config.yaml", encoding="UTF-8") as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
+        
         return cfg
 
 class static:
@@ -18,7 +23,61 @@ class static:
     status = 0
     baseCheck = False
     cfg = get_config()
-    
+    user_login = ''
+    uri = ''
+
+    def __init__(self):
+        gea.static = self
+
+    @classmethod
+    def get_dict_persons(self, dict):
+        self.baseCheck = check_local_database()
+
+        if len(dict) == 0:
+            return {}
+        
+        dicta = dict
+
+        if self.baseCheck == True:
+            with pymssql.connect(self.cfg["sql"]["hostname"], self.cfg["sql"]["user"], self.cfg["sql"]["password"], self.cfg["sql"]["database"]) as sex:
+
+                cursor = sex.cursor()
+
+                cursor.execute(f"SELECT *,CONVERT(VARCHAR,birth_date,104) FROM person WHERE id in({', '.join(map(str, dict))});")
+                rows = cursor.fetchall()
+
+                dungeonmasters = []
+
+                for row in rows:
+                    passport_serial = row[1]
+
+                    if (len(passport_serial.split(' ')) == 4):
+                        passport_serial = "АС"+passport_serial[2:]
+
+                    dungeonmaster = {
+                        'id': row[0],
+                        'passportSerial': passport_serial,
+                        'lastName': row[2],
+                        'firstName': row[3],
+                        'patronymic': row[4],
+                        'birthDate': row[17],
+                        'birthPlace': row[6],
+                        'passportIssue': row[7],
+                        'passportIssueDate': row[8],
+                        'passportDivisionCode': row[9],
+                        'address': row[10],
+                        'phoneHome': row[11],
+                        'phoneMobile': row[12],
+                        'recruimentId': row[13],
+                        'codeword': row[14],
+                        'dateAdd': row[15],
+                        'login': dicta[(str)(row[0])]
+                    }
+
+                    dungeonmasters.append(dungeonmaster)
+
+                return dungeonmasters
+
     @classmethod
     def get_total_count(self):
         persons = get_persons(1)
@@ -48,7 +107,8 @@ class static:
         self.loginCheck = True
         self.status = 200
 
-    
+gea.static = static()
+
 def get_datetime_now_day():
     now = siski.datetime.now()
     now_plus_1 = now + siski.timedelta(days=1)
@@ -106,6 +166,91 @@ def total_count():
             
             return row[0]
         
+def create_user(login,password_hash):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+
+            cursor = sex.cursor()
+
+            cursor.execute(f"select count(login) from users where login = '{login}';")
+            row = cursor.fetchone()
+            if row[0] == 0:
+                cursor.execute(f"INSERT INTO users(login,password,root) VALUES('{login}','{password_hash}',0);")
+                sex.commit()
+
+def get_user(login):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+            cursor = sex.cursor()
+            cursor.execute(f"select * from users where login = '{login}';")
+            row = cursor.fetchone()
+
+            myu = user(row[0],row[1],row[2],row[3])
+
+            return myu
+
+def get_user_id(id):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+            cursor = sex.cursor()
+            cursor.execute(f"select * from users where id = {id};")
+            row = cursor.fetchone()
+
+            myu = user(row[0],row[1],row[2],row[3])
+
+            return myu
+
+class user:
+    auth = False
+
+    def __init__(self,id,login,password,root):
+        self.id = id
+        self.login = login
+        self.password = password
+        self.root = root
+        static.user_login = login
+
+    def is_authenticated(self):
+        static.user_login = self.login
+        return self.auth
+    
+    def get_id(self):
+        static.user_login = self.login
+        return self.id
+    
+    def is_active():
+        return True
+    
+    def is_anonymous():
+        return False
+        
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
+def generate_hash(password):
+    return generate_password_hash(password)
+
+def check_hash(login,password):
+    static.baseCheck = check_local_database()
+
+    if static.baseCheck == True:
+        with connect() as sex:
+            cursor = sex.cursor()
+            cursor.execute(f"select password from users where login = '{login}';")
+            row = cursor.fetchone()
+
+            if row == None:
+                return False
+
+            return check_password_hash(row[0], password)
+            
+        
 def total_count_team():
     static.baseCheck = check_local_database()
 
@@ -122,25 +267,25 @@ def total_count_team():
             
             return row[0]
     
-def count_add():
+def count_add(login):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
         sex = connect("Day_Statistic")
 
-        db_table = "count_add_edit"
+        db_table = "user_statistic"
 
         cursor = sex.cursor()
-        cursor.execute(f"SELECT * FROM dbo.{db_table} WHERE name_pc = '{static.pc_name}';")
+        cursor.execute(f"SELECT * FROM dbo.{db_table} WHERE login = '{login}';")
 
         row = cursor.fetchone()
 
         if row == None:
-            query = f"INSERT INTO dbo.{db_table}(name_pc, ip, count) VALUES('{static.pc_name}', '{static.pc_ip}', 1)"
+            query = f"INSERT INTO dbo.{db_table}(login, count) VALUES('{login}', 1)"
             cursor.execute(query)
             sex.commit()
         else:
-            query = f"UPDATE dbo.{db_table} SET count = {row[3]+1} WHERE id={row[0]}"
+            query = f"UPDATE dbo.{db_table} SET count = {row[2]+1} WHERE id={row[0]}"
             cursor.execute(query)
             sex.commit()        
 
@@ -167,7 +312,7 @@ def get_persons_db(limit,offset, sort = "person.id DESC", id = "", passport = ""
             if sort == "":
                 sort = "person.id DESC"
 
-            sql = f"SELECT person.*, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104), person_team.outgoing, team, account_number FROM person LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial LEFT OUTER JOIN person_team ON person.passport_serial = person_team.passport_serial LEFT OUTER JOIN recruitment_office_name ON recruitment_office_name.id = person.recruitment_office_id LEFT OUTER JOIN team ON person_team.outgoing = team.outgoing LEFT OUTER JOIN person_orphan ON person.passport_serial = person_orphan.passport_serial {id} {fam} {nam} {par} {passport} {card} ORDER BY {sort} OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;"
+            sql = f"SELECT person.*, CONVERT(VARCHAR,birth_date,104), CONVERT(VARCHAR,passport_issue_date,104), person_team.outgoing, team, account_number, account_number_registered_in_military_id as registered, plog.login FROM person LEFT OUTER JOIN person_log as plog ON person.id = plog.id LEFT OUTER JOIN person_team_metadata ON person.passport_serial = person_team_metadata.passport_serial LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial LEFT OUTER JOIN person_team ON person.passport_serial = person_team.passport_serial LEFT OUTER JOIN recruitment_office_name ON recruitment_office_name.id = person.recruitment_office_id LEFT OUTER JOIN team ON person_team.outgoing = team.outgoing LEFT OUTER JOIN person_orphan ON person.passport_serial = person_orphan.passport_serial {id} {fam} {nam} {par} {passport} {card} ORDER BY {sort} OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY;"
             print(sql)
             cursor = sex.cursor()
             cursor.execute(sql)
@@ -199,13 +344,26 @@ def get_persons_db(limit,offset, sort = "person.id DESC", id = "", passport = ""
                     'dateAdd': row[15],
                     'outgoing': row[19],
                     'team': row[20],
-                    'accountNumber': row[21]
+                    'accountNumber': row[21],
+                    'who': row[23]
                 }
                 
+                dungeonmaster['w2ui'] = { 'style': "" }
+                style = {}
+
                 if row[20] != None:
                     print(row, row[20])
                     if (int)(row[20]) < static.cfg['bank']['inside']:
-                        dungeonmaster['w2ui'] = { 'style': f"background-color: {static.cfg['bank']['color_inteam']}" }
+                        style['outgoing'] = f"background-color: {static.cfg['bank']['color_inteam']}"
+                        style['team'] = f"background-color: {static.cfg['bank']['color_inteam']}"
+                        
+
+                if row[22] != None:
+                    if row[22] == 1:
+                        style['accountNumber'] = f"background-color: {static.cfg['bank']['color_registred']};"
+            
+                dungeonmaster['w2ui'] = { 'style': style }
+#style['lastName'] = f"background-color: {color};"
 
                 i = i + 1
                 persons.append(dungeonmaster)
@@ -213,14 +371,16 @@ def get_persons_db(limit,offset, sort = "person.id DESC", id = "", passport = ""
             return persons
 
 
-def find_in_bank(kod):
+def find_in_bank(kod: str):
     static.baseCheck = check_local_database()
 
     if static.baseCheck == True:
         with connect() as sex:
-
             cursor = sex.cursor()
-            cursor.execute(f"SELECT *,CONVERT(VARCHAR,birth_date,104) FROM person WHERE passport_serial = '{kod}';")
+
+            sql = f"SELECT *,CONVERT(VARCHAR,birth_date,104), person_card.account_number, plog.login FROM person LEFT OUTER JOIN person_log as plog ON person.id = plog.id LEFT OUTER JOIN person_card ON person.passport_serial = person_card.passport_serial WHERE person.passport_serial = '{kod}';"
+            print(sql)
+            cursor.execute(sql)
 
             row = cursor.fetchone()
             
@@ -236,7 +396,7 @@ def find_in_bank(kod):
                 'patronymic': row[4],
                 'middleName': row[4],
                 'birthDate': row[5],
-                'birthDateFormated': row[17],
+                'birthDateFormated': row[22],
                 'birthPlace': row[6],
                 'passportIssue': row[7],
                 'passportIssueDate': row[8],
@@ -246,7 +406,9 @@ def find_in_bank(kod):
                 'phoneMobile': row[12],
                 'recruimentId': row[13],
                 'codeword': row[14],
-                'dateAdd': row[15]
+                'dateAdd': row[15],
+                'card': row[23],
+                'who': row[24]
             }
 
             return dungeonmaster

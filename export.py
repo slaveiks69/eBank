@@ -1,27 +1,44 @@
-from flask import Blueprint, json, render_template, request, redirect, url_for
-from utils import *
+from flask import Blueprint, json, request
+import yaml
+#from index import cfg
 
 export = Blueprint('export', __name__)
 
 import openpyxl, shutil, os, datetime
 
-@export.post('/export')
-def export_post():
-    arg = json.loads(request.data)
-
-    persons_to_export = arg['data']
-
-    shutil.copy(static.cfg["excel"]["formPath"], static.cfg["excel"]["copyFormPath"])
+def sex():
+    with open("config.yaml", encoding="UTF-8") as f:
+        cfg = yaml.load(f, Loader=yaml.FullLoader)
+        return cfg
     
-    workbook = openpyxl.load_workbook(static.cfg["excel"]["copyFormPath"])
+cfg = sex()
+
+@export.post('/export')
+def export_post(gexport = False, gdict = None):
+    if gexport is False:
+        arg = json.loads(request.data)
+        persons_to_export = arg['data']
+    else:
+        persons_to_export = gdict
+
+    shutil.copy(cfg["excel"]["formPath"], cfg["excel"]["copyFormPath"])
+    
+    workbook = openpyxl.load_workbook(cfg["excel"]["copyFormPath"])
     sheet = workbook['Лист1']
 
     row_start = 4
     index = 0
 
+    print(persons_to_export)
+
     for person in persons_to_export:
-        birthDate = datetime.datetime.strptime(person['birthDate'],"%a, %d %b %Y %H:%M:%S GMT")
-        passportIssueDate = datetime.datetime.strptime(person['passportIssueDate'],"%a, %d %b %Y %H:%M:%S GMT")
+        if gexport is False:
+            birthDate = datetime.datetime.strptime(person['birthDate'],"%a, %d %b %Y %H:%M:%S GMT")
+            passportIssueDate = datetime.datetime.strptime(person['passportIssueDate'],"%a, %d %b %Y %H:%M:%S GMT")
+        else:
+            birthDate = datetime.datetime.strptime(person['birthDate'],"%d.%m.%Y")
+            passportIssueDate = person['passportIssueDate']
+        
 
         sheet.cell(row=row_start, column=1).value = index # индексация с 0
         sheet.cell(row=row_start, column=2).value = person['lastName'] # фамилия
@@ -43,23 +60,23 @@ def export_post():
         row_start = row_start + 1
         index = index + 1
 
-    if check_local_database():
+    if True is True:
         name = ""
         k = 1
         now = datetime.datetime.now().strftime("%Y.%m.%d")
 
-        ExcelServerPath = static.cfg["default"]["serverPath"]+"\\"+static.cfg["default"]["folder"]
+        ExcelServerPath = cfg["default"]["serverPath"]+"\\"+cfg["default"]["folder"]
 
         while (True):
             name = f"ВТБ_{now}_{k}.xlsx"
-            if os.path.exists(ExcelServerPath+static.cfg["excel"]["savePath"]+name):
+            if os.path.exists(ExcelServerPath+cfg["excel"]["savePath"]+name):
                 k = k + 1
             else:
                 break
         
-        workbook.save(ExcelServerPath+static.cfg["excel"]["savePath"]+name)
+        workbook.save(ExcelServerPath+cfg["excel"]["savePath"]+name)
 
-        save_folder_path = ExcelServerPath+static.cfg["excel"]["exportsPath"]+"\\"+now+"\\"
+        save_folder_path = ExcelServerPath+cfg["excel"]["exportsPath"]+"\\"+now+"\\"
 
         if not os.path.exists(save_folder_path):
             os.makedirs(save_folder_path)
@@ -76,6 +93,6 @@ def export_post():
         
         workbook.save(save_folder_path+name)
     else:
-        workbook.save(static.cfg["excel"]["copyFormPath"])
+        workbook.save(cfg["excel"]["copyFormPath"])
 
     return { 'export': 'okay' }

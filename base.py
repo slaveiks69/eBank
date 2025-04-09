@@ -7,8 +7,11 @@ base = Blueprint('base', __name__)
 def find_people():
     arg = json.loads(request.data)
     kod = str(arg['kod'])[:2]+str(arg['kod'])[3:][:2]+str(arg['kod'])[6:]
-    found = { 'found': 'none' }
 
+    print(f"\n\n\n{kod}\n\n\n")
+
+    found = { 'found': 'none' }
+    
     # bank baze
     if found['found'] == 'none':
         person = find_in_bank(arg['kod'])
